@@ -1,0 +1,24 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset=utf-8>
+		<title>jQuery Advanced Select Dropdown Plugin</title>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+		<script src="superselect.js"></script>
+		<script>
+			$(document).ready(function(){
+				$('.select_input').superselect();
+			});
+		</script>
+	</head>
+	<body>
+		<h1>Super Select</h1>
+		<h2>Convert normal select into a more advanced dropdown.</h2>
+		<select class="select_input" name="animals">
+			<option value="cat">Cat</option>
+			<option value="dog">Dog</option>
+			<option value="horse">Horse</option>
+			<option value="ferret">Ferret</option>
+		</select>
+	</body>
+</html>
