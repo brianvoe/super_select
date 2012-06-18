@@ -17,14 +17,32 @@
         create: function(options, input) {
             /* Set variables */
             var info = this;
-                 
+            var orig_select = $(input);
+            var orig_id = '';
+            if (orig_select.attr('id')) {
+              orig_id = orig_select.attr('id');
+            } else {
+              orig_id = Math.ceil(Math.random() * 100000);
+              orig_select.attr('id', orig_id);
+            }
+            alert(orig_select.attr('id'));
+            var new_select = $('<div></div>');
 
             /* Replace default options with requested options */
             info.options = $.extend({}, select_options, options);
 
+            /* If  */
+
             /* Hide select dropdown */
+            orig_select.hide();
 
             /* Create new dropdown */
+            new_select.insertAfter(orig_select);
+
+            /* Append values from original select */
+            $("#selectId > option").each(function() {
+              alert(this.text + ' ' + this.value);
+            });
       
         },
         destroy: function() {
