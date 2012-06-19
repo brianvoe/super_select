@@ -1,6 +1,29 @@
 .supsel_div {
 
 }
-.supsel_div .supsel_results {
-
+.supsel_div .supsel_select {
+	border: solid 1px #000;
+	cursor: pointer;
+}
+.supsel_div .supsel_info {
+	border: solid 1px #000;
+}
+.supsel_div .supsel_info .supsel_search input {
+	width: 100%;
+}
+.supsel_div .supsel_info .supsel_results ul {
+	padding: 0px;
+	margin: 0px;
+}
+.supsel_div .supsel_info .supsel_results ul li {
+	padding: 0px;
+	margin: 0px;
+	list-style: none;
+	cursor: pointer;
+}
+.supsel_div .supsel_info .supsel_results ul li.supsel_selected {
+	background-color: blue;
+}
+.supsel_div .supsel_info .supsel_results ul li:hover {
+	background-color: blue;
 }

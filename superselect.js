@@ -10,13 +10,18 @@
 
     /* Select Options */
     var select_options = {
-        
+        select_width: 150,
+        info_width: 300
     };
 
     var super_select_funcs = {
         create: function(options, input) {
             /* Set variables */
             var info = this;
+
+            /* Replace default options with requested options */
+            info.options = $.extend({}, select_options, options);
+
             var orig_select = $(input);
             var orig_id = '';
             if (orig_select.attr('id')) {
@@ -25,21 +30,20 @@
                 orig_id = Math.ceil(Math.random() * 100000);
                 orig_select.attr('id', orig_id);
             }
+            var orig_val = $('#'+orig_id).val();
+            var orig_index = $('#'+orig_id).prop('selectedIndex');
             var new_id = orig_id+'_supsel';
             var new_li_num = 0;
             var new_select = '';
             new_select += '<div id="'+new_id+'_div'+'" class="supsel_div">';
-            new_select += '   <div class="supsel_select"></div>';
-            new_select += '   <div class="supsel_info">';
-            new_select += '       <div class="supsel_search"></div>';
+            new_select += '   <div class="supsel_select" style="width: '+info.options.select_width+'px;">Select option</div>';
+            new_select += '   <div class="supsel_info"style="width: '+info.options.info_width+'px;">';
+            new_select += '       <div class="supsel_search"><input type="text" value="" /></div>';
             new_select += '       <div class="supsel_results"><ul></ul></div>';
             new_select += '   </div>';
             new_select += '</div>';
             var new_array = new Array();
             var new_results = '';
-
-            /* Replace default options with requested options */
-            info.options = $.extend({}, select_options, options);
 
             /* Hide select dropdown */
             //orig_select.hide();
@@ -59,7 +63,13 @@
             $('#'+new_id+'_div .supsel_results ul li').click(function() {
                 /* Set original select dropdown */
                 $('#'+orig_id).val(new_array[$(this).attr('id')]);
+                /* Highlight selcted li */
+                $('#'+new_id+'_div .supsel_results ul li').removeClass('supsel_selected');
+                $(this).addClass('supsel_selected');
             });
+
+            /* Select dropdown based upon dropdown value */
+            $('#'+new_id+'_'+orig_index).addClass('supsel_selected');
 
         },
         destroy: function() {
