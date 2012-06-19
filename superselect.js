@@ -20,10 +20,10 @@
             var orig_select = $(input);
             var orig_id = '';
             if (orig_select.attr('id')) {
-              orig_id = orig_select.attr('id');
+                orig_id = orig_select.attr('id');
             } else {
-              orig_id = Math.ceil(Math.random() * 100000);
-              orig_select.attr('id', orig_id);
+                orig_id = Math.ceil(Math.random() * 100000);
+                orig_select.attr('id', orig_id);
             }
             var new_id = orig_id+'_supsel';
             var new_li_num = 0;
@@ -47,25 +47,25 @@
 
             /* Append values from original select */
             $('#'+orig_id+' > option').each(function() {
-              new_results += '<li id="'+new_id+'_'+new_li_num+'">'+this.text+'</li>';
-              new_array[new_id+'_'+new_li_num] = this.value;
-              new_li_num++;
+                new_results += '<li id="'+new_id+'_'+new_li_num+'">'+this.text+'</li>';
+                new_array[new_id+'_'+new_li_num] = this.value;
+                new_li_num++;
             });
             $('#'+new_id+'_div .supsel_results ul').append(new_results);
 
             /* Add click events to results li */
             $('#'+new_id+'_div .supsel_results ul li').click(function() {
-              /* Set original select dropdown */
-              $('#'+orig_id).val(new_array[$(this).attr('id')]);
+                /* Set original select dropdown */
+                $('#'+orig_id).val(new_array[$(this).attr('id')]);
             });
 
         },
         destroy: function() {
             var info = $(this).data('superselect');
 
-            /* Remove Super Drop */
+        /* Remove Super Drop */
 
-            /* Destroy Data */
+        /* Destroy Data */
         },
     };
 
@@ -75,17 +75,17 @@
             if($(this).is('select')) {
                 /* Method calling logic */
                 if (super_select_funcs[options]) {
-                  if($(this).data('superselect')) {
-                    super_select_funcs[options].apply(this);
-                  }
+                    if($(this).data('superselect')) {
+                        super_select_funcs[options].apply(this);
+                    }
                 } else if (typeof options === 'object' || !options) {
-                  if(!$(this).data('superselect')){
-                    var super_select_obj = Object.create(super_select_funcs);
-                    super_select_obj.create(options, this);
-                    $.data(this, 'superselect', super_select_obj);
-                  }   
+                    if(!$(this).data('superselect')){
+                        var super_select_obj = Object.create(super_select_funcs);
+                        super_select_obj.create(options, this);
+                        $.data(this, 'superselect', super_select_obj);
+                    }   
                 } else {
-                  $.error('Method ' +  options + ' does not exist in Super Select');
+                    $.error('Method ' +  options + ' does not exist in Super Select');
                 }
             } else {
                 $.error('Super Select can only be applied to select dropdowns.');
