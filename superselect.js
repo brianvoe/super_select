@@ -29,6 +29,7 @@
             info.options = $.extend({}, select_options, options);
             info.data = select_data;
 
+            /* Set global variables */
             if ($(input).attr('id')) {
                 info.data.orig_id = $(input).attr('id');
             } else {
@@ -41,6 +42,8 @@
             });
             info.data.multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
             info.data.supsel_id = info.data.orig_id+'_supsel';
+
+            /* Create html for supsel */
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
             new_select += '   <div class="supsel_select supsel_topoff" style="width: '+info.options.select_width+'px;">';
@@ -54,35 +57,38 @@
             new_select += '</div>';
             var new_results = '';
 
+            /* Set inputs into variables */
+            var orig_select = $('#'+info.data.orig_id);
+            var supsel_select = $(new_select);
+
             /* Hide original select dropdown */
             //info.data.orig_select.hide();
 
             /* Create new dropdown */
-            $(new_select).insertAfter($('#'+info.data.orig_id));
+            supsel_select.insertAfter(orig_select);
 
             /* Append values from original select and create array */
-            $('#'+info.data.orig_id+' > option').each(function() {
+            orig_select.find(' > option').each(function() {
                 new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
             });
-            $('#'+info.data.supsel_id+' .supsel_results ul').append(new_results);
+            supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            $('#'+info.data.supsel_id+' .supsel_select').toggle(function() {
-                $(this).parent().find('.supsel_info').show();
-                /* Change select style */
-                $(this).removeClass('supsel_topoff').addClass('supsel_topon');
-                /* Change arrow image */
-                $(this).find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
-            }, function() {
-                $(this).parent().find('.supsel_info').hide();
-                /* Change select style */
-                $(this).removeClass('supsel_topon').addClass('supsel_topoff');
-                /* Change arrow image */
-                $(this).find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
+            supsel_select.find('.supsel_select').click(function() {
+                console.log(info);
+                // info = info.data.info;
+                // //console.log(info);
+                // if($('#'+info.data.supsel_id).find('.supsel_info').is(':visible')){
+                //     info.hide_results();
+                // } else {
+                //     info.show_results();
+                // }
+
+                return false;
             });
 
             /* Add click events to results li */
-            $('#'+info.data.supsel_id+' .supsel_results ul li').click({orig_id:info.data.orig_id}, function(info) {
+            supsel_select.find('.supsel_results ul li').click({orig_id:info.data.orig_id}, function(info) {
                 /* Set original select dropdown */
                 $('#'+info.data.orig_id).val($(this).attr('data-value'));
 
@@ -93,11 +99,42 @@
 
             /* Select dropdown based upon dropdown value */
             $.each(info.data.values, function(index, value) {
-                $('#'+info.data.supsel_id+' .supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
+                supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
             });
 
         },
         update_orig: function() {
+            var info = $(this).data('superselect');
+
+            /* Set inputs into variables */
+            var supsel_select = $('#'+info.data.supsel_id);
+
+
+        },
+        show_results: function() {
+            var info = this;
+            //console.log(info);
+
+            /* Set inputs into variables */
+            var supsel_select = $('#'+info.data.supsel_id);
+
+            supsel_select.find('.supsel_info').show();
+            /* Change select style */
+            supsel_select.find('.supsel_topoff').removeClass('supsel_topoff').addClass('supsel_topon');
+            /* Change arrow image */
+            supsel_select.find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
+        },
+        hide_results: function() {
+            var info = $(this).data('superselect');
+
+            /* Set inputs into variables */
+            var supsel_select = $('#'+info.data.supsel_id);
+
+            supsel_select.find('.supsel_info').hide();
+            /* Change select style */
+            supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
+            /* Change arrow image */
+            supsel_select.find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
         },
         destroy: function() {
             var info = $(this).data('superselect');
