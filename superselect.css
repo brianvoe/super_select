@@ -1,29 +1,84 @@
 .supsel_div {
-
+	color: #444444;
 }
 .supsel_div .supsel_select {
-	border: solid 1px #000;
 	cursor: pointer;
+	position: relative;
+	z-index: 2;
+	padding: 5px;
+	margin: 0px;
+}
+.supsel_div .supsel_topoff {
+	border: solid 1px #8f8f8f;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+}
+.supsel_div .supsel_topon {
+	border-top: solid 1px #8f8f8f;
+	border-right: solid 1px #8f8f8f;
+	border-bottom: solid 1px #ffffff;
+	border-left: solid 1px #8f8f8f;
+	border-radius: 5px 5px 0px 0px;
+	-moz-border-radius: 5px 5px 0px 0px;
+	-webkit-border-radius: 5px 5px 0px 0px;
+}
+.supsel_div .supsel_arrow_down {
+	float: right;
+	height: 13px;
+	width: 10px;
+	background: #fff url('superselect.png') no-repeat -4px -3px;
+}
+.supsel_div .supsel_arrow_up {
+	float: right;
+	height: 13px;
+	width: 10px;
+	background: #fff url('superselect.png') no-repeat -22px -3px;
 }
 .supsel_div .supsel_info {
-	border: solid 1px #000;
+	display: none;
+	position: relative;
+	z-index: 1;
+	padding: 5px;
+	margin: -1px 0px 0px 0px;
+	border: solid 1px #8f8f8f;
+	border-radius: 0px 5px 5px 5px;
+	-moz-border-radius: 0px 5px 5px 5px;
+	-webkit-border-radius: 0px 5px 5px 5px;
 }
 .supsel_div .supsel_info .supsel_search input {
 	width: 100%;
+	padding: 6px;
+    margin: 0px;
+    background-color: #fff;
+    border: 1px solid #d5d5d5;
+    border-radius: 4px;
+    -moz-border-radius: 4px;
+    -webkit-border-radius: 4px;
+    box-shadow: inset 2px 2px 2px #eeeeee;
+    -moz-box-shadow: inset 2px 2px 2px #eeeeee;
+    -webkit-box-shadow: inset 2px 2px 2px #eeeeee;
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+    background: #fff url('superselect.png') no-repeat 100% -20px;
 }
 .supsel_div .supsel_info .supsel_results ul {
 	padding: 0px;
 	margin: 0px;
 }
 .supsel_div .supsel_info .supsel_results ul li {
-	padding: 0px;
+	padding: 4px;
 	margin: 0px;
+	color: ;
 	list-style: none;
 	cursor: pointer;
 }
 .supsel_div .supsel_info .supsel_results ul li.supsel_on {
-	background-color: blue;
+	background-color: #3875D7;
+	color: #ffffff;
 }
 .supsel_div .supsel_info .supsel_results ul li:hover {
-	background-color: blue;
+	background-color: #3875D7;
+	color: #ffffff;
 }

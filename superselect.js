@@ -43,7 +43,10 @@
             info.data.supsel_id = info.data.orig_id+'_supsel';
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
-            new_select += '   <div class="supsel_select" style="width: '+info.options.select_width+'px;">Select option</div>';
+            new_select += '   <div class="supsel_select supsel_topoff" style="width: '+info.options.select_width+'px;">';
+            new_select += '     <span>Select option</span>';
+            new_select += '     <div class="supsel_arrow_down"></div>';
+            new_select += '   </div>';
             new_select += '   <div class="supsel_info" style="width: '+info.options.info_width+'px;">';
             new_select += '       <div class="supsel_search"><input type="text" value="" /></div>';
             new_select += '       <div class="supsel_results"><ul></ul></div>';
@@ -62,6 +65,21 @@
                 new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
             });
             $('#'+info.data.supsel_id+' .supsel_results ul').append(new_results);
+
+            /* Add click to supsel_select */
+            $('#'+info.data.supsel_id+' .supsel_select').toggle(function() {
+                $(this).parent().find('.supsel_info').show();
+                /* Change select style */
+                $(this).removeClass('supsel_topoff').addClass('supsel_topon');
+                /* Change arrow image */
+                $(this).find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
+            }, function() {
+                $(this).parent().find('.supsel_info').hide();
+                /* Change select style */
+                $(this).removeClass('supsel_topon').addClass('supsel_topoff');
+                /* Change arrow image */
+                $(this).find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
+            });
 
             /* Add click events to results li */
             $('#'+info.data.supsel_id+' .supsel_results ul li').click({orig_id:info.data.orig_id}, function(info) {
