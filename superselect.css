@@ -36,7 +36,7 @@
 	background: #fff url('superselect.png') no-repeat -22px -3px;
 }
 .supsel_div .supsel_info {
-	display: none;
+	/*display: none;*/
 	position: relative;
 	z-index: 1;
 	padding: 5px;
@@ -77,6 +77,9 @@
 .supsel_div .supsel_info .supsel_results ul li.supsel_on {
 	background-color: #3875D7;
 	color: #ffffff;
+}
+.supsel_div .supsel_info .supsel_results ul li.supsel_hide {
+	display: none;
 }
 .supsel_div .supsel_info .supsel_results ul li:hover {
 	background-color: #3875D7;

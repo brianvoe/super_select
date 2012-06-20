@@ -9,24 +9,38 @@
         <script>
             $(document).ready(function(){
                 $('.supsel').superselect();
+                $('.add_super').click(function(e){
+                    $('.supsel').superselect();
+                    e.preventDefault();
+                });
+                $('.remove_super').click(function(e){
+                    $('.supsel').superselect('destroy');
+                    e.preventDefault();
+                });
+                $('.value_super').click(function(e){
+                    $('.supsel').superselect('set_values', ['tammy', 'steve']);
+                    e.preventDefault();
+                });
             });
         </script>
     </head>
     <body>
         <h1>Super Select</h1>
         <h2>Convert normal select into a more advanced dropdown.</h2>
+        <a href="javascript:;" class="add_super">Add Super Select</a>
+        <span> - </span>
+        <a href="javascript:;" class="remove_super">Remove Super Select</a>
+        <span> - </span>
+        <a href="javascript:;" class="value_super">Set values</a>
+        <div style="clear: both;"></div>
+        <h3>Single Select</h3>
         <select class="supsel" name="animals">
             <option value="cat">Cat</option>
             <option selected="selected" value="dog">Dog</option>
             <option value="horse">Horse</option>
             <option value="ferret">Ferret</option>
         </select>
-        <select class="supsel" name="animals">
-            <option value="cat">Cat</option>
-            <option value="dog">Dog</option>
-            <option value="horse">Horse</option>
-            <option selected="selected" value="ferret">Ferret</option>
-        </select>
+        <h3>Multiple Select</h3>
         <select class="supsel" multiple name="names">
             <option value="tammy">Tammy</option>
             <option selected="selected" value="brian">Brian</option>

@@ -17,7 +17,9 @@
     var select_data = {
         multiple: false,
         orig_id: '',
+        orig_select: null,
         supsel_id: '',
+        supsel_select: null,
         values: []
     };
 
@@ -27,7 +29,7 @@
 
             /* Replace default options with requested options */
             info.options = $.extend({}, select_options, options);
-            info.data = select_data;
+            info.data = $.extend({}, select_data, {});
 
             /* Set global variables */
             if ($(input).attr('id')) {
@@ -58,101 +60,129 @@
             var new_results = '';
 
             /* Set inputs into variables */
-            var orig_select = $('#'+info.data.orig_id);
-            var supsel_select = $(new_select);
+            info.data.orig_select = $('#'+info.data.orig_id);
+            info.data.supsel_select = $(new_select);
 
             /* Hide original select dropdown */
             //info.data.orig_select.hide();
 
             /* Create new dropdown */
-            supsel_select.insertAfter(orig_select);
+            info.data.supsel_select.insertAfter(info.data.orig_select);
 
             /* Append values from original select and create array */
-            orig_select.find(' > option').each(function() {
+            info.data.orig_select.find(' > option').each(function() {
                 new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
             });
-            supsel_select.find('.supsel_results ul').append(new_results);
+            info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            supsel_select.find('.supsel_select').click(function() {
-                console.log(info);
-                // info = info.data.info;
-                // //console.log(info);
-                // if($('#'+info.data.supsel_id).find('.supsel_info').is(':visible')){
-                //     info.hide_results();
-                // } else {
-                //     info.show_results();
-                // }
-
-                return false;
+            info.data.supsel_select.find('.supsel_select').toggle(function(){
+                info.show_results();
+            },function(){
+                info.hide_results();
             });
 
             /* Add click events to results li */
-            supsel_select.find('.supsel_results ul li').click({orig_id:info.data.orig_id}, function(info) {
-                /* Set original select dropdown */
-                $('#'+info.data.orig_id).val($(this).attr('data-value'));
+            info.data.supsel_select.find('.supsel_results ul li').click(function() {
+                if(info.data.multiple){
+                    /* Push multiple values */
+                    info.data.values.push($(this).attr('data-value'));
+                } else {
+                    /* Set single value */
+                    info.data.values = [$(this).attr('data-value')];
+                }
 
-                /* Highlight selcted li */
-                $(this).parent().find('li').removeClass('supsel_on');
-                $(this).addClass('supsel_on');
+                info.set_select_values();
+                info.set_display_values();
             });
 
             /* Select dropdown based upon dropdown value */
-            $.each(info.data.values, function(index, value) {
-                supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
-            });
+            info.set_display_values();
+
 
         },
-        update_orig: function() {
-            var info = $(this).data('superselect');
+        set_values: function(values) {
+            var info = this;
 
-            /* Set inputs into variables */
-            var supsel_select = $('#'+info.data.supsel_id);
+            if($.isArray(values)) {
+                info.data.values = [];
+                $.each(values, function(index, value) {
+                    info.data.values.push(value);
+                });
+            } else {
+                info.data.values = [values];
+            }
 
+            info.set_select_values();
+            info.set_display_values();
+        },
+        set_select_values: function() {
+            var info = this;
 
+            if(info.data.multiple) {
+                info.data.orig_select.val(info.data.values);
+            } else {
+                info.data.orig_select.val(info.data.values);
+            }
+        },
+        set_display_values: function() {
+            var info = this;
+
+            if(info.data.multiple) {
+                /* Hide multiple selected values */
+                info.data.supsel_select.find('.supsel_info li').removeClass('supsel_on supsel_hide');
+                $.each(info.data.values, function(index, value) {
+                    info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_hide');
+                });
+            } else {
+                /* Set style for selected single value */
+                info.data.supsel_select.find('.supsel_info li').removeClass('supsel_on supsel_hide');
+                $.each(info.data.values, function(index, value) {
+                    info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
+                });
+            }
         },
         show_results: function() {
             var info = this;
-            //console.log(info);
 
-            /* Set inputs into variables */
-            var supsel_select = $('#'+info.data.supsel_id);
-
-            supsel_select.find('.supsel_info').show();
+            info.data.supsel_select.find('.supsel_info').show();
             /* Change select style */
-            supsel_select.find('.supsel_topoff').removeClass('supsel_topoff').addClass('supsel_topon');
+            info.data.supsel_select.find('.supsel_topoff').removeClass('supsel_topoff').addClass('supsel_topon');
             /* Change arrow image */
-            supsel_select.find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
+            info.data.supsel_select.find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
         },
         hide_results: function() {
-            var info = $(this).data('superselect');
+            var info = this;
 
-            /* Set inputs into variables */
-            var supsel_select = $('#'+info.data.supsel_id);
-
-            supsel_select.find('.supsel_info').hide();
+            info.data.supsel_select.find('.supsel_info').hide();
             /* Change select style */
-            supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
+            info.data.supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
             /* Change arrow image */
-            supsel_select.find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
+            info.data.supsel_select.find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
         },
         destroy: function() {
             var info = $(this).data('superselect');
 
-        /* Remove Super Drop */
+            /* Remove Super Drop */
+            info.data.supsel_select.remove();
 
-        /* Destroy Data */
+            /* Show original select */
+            info.data.orig_select.show();
+
+            /* Destroy Data */
+            $.removeData(this, 'superselect');
         }
     };
 
     $.fn.superselect = function(options) {
+        //console.log(parameters);
         return this.each(function() {
             /* Only allow select dropdown */
             if($(this).is('select')) {
                 /* Method calling logic */
                 if (super_select_funcs[options]) {
                     if($(this).data('superselect')) {
-                        super_select_funcs[options].apply(this);
+                        super_select_funcs[options].apply(this, Array.prototype.slice.call(arguments, 1));
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
