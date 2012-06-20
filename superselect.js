@@ -14,63 +14,72 @@
         info_width: 300
     };
 
+    var select_data = {
+        multiple: false,
+        orig_id: '',
+        supsel_id: '',
+        values: []
+    };
+
     var super_select_funcs = {
         create: function(options, input) {
-            /* Set variables */
             var info = this;
 
             /* Replace default options with requested options */
             info.options = $.extend({}, select_options, options);
+            info.data = select_data;
 
-            var orig_select = $(input);
-            var orig_id = '';
-            if (orig_select.attr('id')) {
-                orig_id = orig_select.attr('id');
+            if ($(input).attr('id')) {
+                info.data.orig_id = $(input).attr('id');
             } else {
-                orig_id = Math.ceil(Math.random() * 100000);
-                orig_select.attr('id', orig_id);
+                info.data.orig_id = Math.ceil(Math.random() * 100000);
+                $(input).attr('id', info.data.orig_id);
             }
-            var orig_val = $('#'+orig_id).val();
-            var orig_index = $('#'+orig_id).prop('selectedIndex');
-            var new_id = orig_id+'_supsel';
-            var new_li_num = 0;
+            info.data.values = [];
+            $('#'+info.data.orig_id+' option:selected').each(function () {
+                info.data.values.push(this.value);
+            });
+            info.data.multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
+            info.data.supsel_id = info.data.orig_id+'_supsel';
             var new_select = '';
-            new_select += '<div id="'+new_id+'_div'+'" class="supsel_div">';
+            new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
             new_select += '   <div class="supsel_select" style="width: '+info.options.select_width+'px;">Select option</div>';
-            new_select += '   <div class="supsel_info"style="width: '+info.options.info_width+'px;">';
+            new_select += '   <div class="supsel_info" style="width: '+info.options.info_width+'px;">';
             new_select += '       <div class="supsel_search"><input type="text" value="" /></div>';
             new_select += '       <div class="supsel_results"><ul></ul></div>';
             new_select += '   </div>';
             new_select += '</div>';
-            var new_array = new Array();
             var new_results = '';
 
-            /* Hide select dropdown */
-            //orig_select.hide();
+            /* Hide original select dropdown */
+            //info.data.orig_select.hide();
 
             /* Create new dropdown */
-            $(new_select).insertAfter(orig_select);
+            $(new_select).insertAfter($('#'+info.data.orig_id));
 
             /* Append values from original select and create array */
-            $('#'+orig_id+' > option').each(function() {
-                new_results += '<li id="'+new_id+'_'+new_li_num+'">'+this.text+'</li>';
-                new_array[new_id+'_'+new_li_num] = this.value;
-                new_li_num++;
+            $('#'+info.data.orig_id+' > option').each(function() {
+                new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
             });
-            $('#'+new_id+'_div .supsel_results ul').append(new_results);
+            $('#'+info.data.supsel_id+' .supsel_results ul').append(new_results);
 
             /* Add click events to results li */
-            $('#'+new_id+'_div .supsel_results ul li').click(function() {
+            $('#'+info.data.supsel_id+' .supsel_results ul li').click({orig_id:info.data.orig_id}, function(info) {
                 /* Set original select dropdown */
-                $('#'+orig_id).val(new_array[$(this).attr('id')]);
+                $('#'+info.data.orig_id).val($(this).attr('data-value'));
+
                 /* Highlight selcted li */
-                $('#'+new_id+'_div .supsel_results ul li').removeClass('supsel_selected');
-                $(this).addClass('supsel_selected');
+                $(this).parent().find('li').removeClass('supsel_on');
+                $(this).addClass('supsel_on');
             });
 
             /* Select dropdown based upon dropdown value */
-            $('#'+new_id+'_'+orig_index).addClass('supsel_selected');
+            $.each(info.data.values, function(index, value) {
+                $('#'+info.data.supsel_id+' .supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
+            });
 
+        },
+        update_orig: function() {
         },
         destroy: function() {
             var info = $(this).data('superselect');

@@ -21,7 +21,7 @@
 	list-style: none;
 	cursor: pointer;
 }
-.supsel_div .supsel_info .supsel_results ul li.supsel_selected {
+.supsel_div .supsel_info .supsel_results ul li.supsel_on {
 	background-color: blue;
 }
 .supsel_div .supsel_info .supsel_results ul li:hover {
