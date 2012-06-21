@@ -48,7 +48,7 @@
 
             /* Create html for supsel */
             var new_select = '';
-            new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
+            new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div" tabindex="0">';
             new_select += '   <div class="supsel_select supsel_topoff" style="width: '+info.options.select_width+'px;">';
             new_select += '     <span>Select option</span>';
             new_select += '     <div class="supsel_arrow_down"></div>';
