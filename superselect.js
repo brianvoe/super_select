@@ -89,6 +89,13 @@
                 }
             });
 
+            /* Add tab focus to supsel_select */
+            info.data.supsel_select.focus(function(){
+                if(!info.data.is_shown){
+                    info.show_results();
+                }
+            });
+
             /* Detect if click outside of supsel */
             $(document).click(function(event) { 
                 if($(event.target).parents().index(info.data.supsel_select) == -1) {
