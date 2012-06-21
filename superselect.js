@@ -102,7 +102,7 @@
 
         },
         set_values: function(values) {
-            var info = this;
+            var info = $(this).data('superselect');
 
             if($.isArray(values)) {
                 info.data.values = [];
@@ -174,7 +174,7 @@
         }
     };
 
-    $.fn.superselect = function(options) {
+    $.fn.superselect = function(options, items) {
         //console.log(parameters);
         return this.each(function() {
             /* Only allow select dropdown */
@@ -182,7 +182,7 @@
                 /* Method calling logic */
                 if (super_select_funcs[options]) {
                     if($(this).data('superselect')) {
-                        super_select_funcs[options].apply(this, Array.prototype.slice.call(arguments, 1));
+                        super_select_funcs[options].apply(this, [items]);
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
