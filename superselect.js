@@ -16,6 +16,7 @@
 
     var select_data = {
         multiple: false,
+        is_shown: false,
         orig_id: '',
         orig_select: null,
         supsel_id: '',
@@ -63,6 +64,10 @@
             info.data.orig_select = $('#'+info.data.orig_id);
             info.data.supsel_select = $(new_select);
 
+            /* Set items from original select */
+            info.data.orig_select.attr('tabindex', '-1');
+            //info.data.supsel_select.find('.supsel_search input').attr('tabindex', '2');
+
             /* Hide original select dropdown */
             //info.data.orig_select.hide();
 
@@ -76,10 +81,21 @@
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            info.data.supsel_select.find('.supsel_select').toggle(function(){
-                info.show_results();
-            },function(){
-                info.hide_results();
+            info.data.supsel_select.find('.supsel_select').click(function(){
+                if(info.data.is_shown){
+                    info.hide_results();
+                } else {
+                    info.show_results();
+                }
+            });
+
+            /* Detect if click outside of supsel */
+            $(document).click(function(event) { 
+                if($(event.target).parents().index(info.data.supsel_select) == -1) {
+                    if(info.data.is_shown) {
+                        info.hide_results();
+                    }
+                }
             });
 
             /* Add click events to results li */
@@ -146,10 +162,14 @@
             var info = this;
 
             info.data.supsel_select.find('.supsel_info').show();
+            /* Focus on search box */
+            info.data.supsel_select.find('.supsel_search input').focus();
             /* Change select style */
             info.data.supsel_select.find('.supsel_topoff').removeClass('supsel_topoff').addClass('supsel_topon');
             /* Change arrow image */
             info.data.supsel_select.find('.supsel_arrow_down').removeClass('supsel_arrow_down').addClass('supsel_arrow_up');
+
+            info.data.is_shown = true;
         },
         hide_results: function() {
             var info = this;
@@ -159,6 +179,8 @@
             info.data.supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
             /* Change arrow image */
             info.data.supsel_select.find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
+
+            info.data.is_shown = false;
         },
         destroy: function() {
             var info = $(this).data('superselect');
