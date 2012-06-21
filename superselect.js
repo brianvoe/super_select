@@ -174,15 +174,15 @@
         }
     };
 
-    $.fn.superselect = function(options, items) {
-        //console.log(parameters);
+    $.fn.superselect = function(options) {
+        var args = Array.prototype.slice.call(arguments, 1);
         return this.each(function() {
             /* Only allow select dropdown */
             if($(this).is('select')) {
                 /* Method calling logic */
                 if (super_select_funcs[options]) {
                     if($(this).data('superselect')) {
-                        super_select_funcs[options].apply(this, [items]);
+                        super_select_funcs[options].apply(this, args);
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
