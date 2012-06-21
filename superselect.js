@@ -48,8 +48,8 @@
 
             /* Create html for supsel */
             var new_select = '';
-            new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div" tabindex="0">';
-            new_select += '   <div class="supsel_select supsel_topoff" style="width: '+info.options.select_width+'px;">';
+            new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
+            new_select += '   <div class="supsel_select supsel_topoff" tabindex="0" style="width: '+info.options.select_width+'px;">';
             new_select += '     <span>Select option</span>';
             new_select += '     <div class="supsel_arrow_down"></div>';
             new_select += '   </div>';
@@ -81,7 +81,7 @@
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            info.data.supsel_select.find('.supsel_select').click(function(){
+            info.data.supsel_select.find('.supsel_select').mousedown(function(){
                 if(info.data.is_shown){
                     info.hide_results();
                 } else {
@@ -90,7 +90,7 @@
             });
 
             /* Add tab focus to supsel_select */
-            info.data.supsel_select.focus(function(){
+            info.data.supsel_select.find('.supsel_select').focusin(function(){
                 if(!info.data.is_shown){
                     info.show_results();
                 }
