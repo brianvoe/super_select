@@ -10,17 +10,23 @@
 
     /* Select Options */
     var select_options = {
+        blank_option: 'Choose option...',
         select_width: 150,
         info_width: 300
     };
 
     var select_data = {
+        /* Status */
         multiple: false,
         is_shown: false,
+        /* ids and select */
         orig_id: '',
         orig_select: null,
         supsel_id: '',
         supsel_select: null,
+        /* Values */
+        orig_values: {},
+        search_values: {},
         values: []
     };
 
@@ -32,6 +38,11 @@
             info.options = $.extend({}, select_options, options);
             info.data = $.extend({}, select_data, {});
 
+            /* Reset array values */
+            info.data.orig_values = {};
+            info.data.search_values = {};
+            info.data.values = [];
+            
             /* Set global variables */
             if ($(input).attr('id')) {
                 info.data.orig_id = $(input).attr('id');
@@ -39,7 +50,7 @@
                 info.data.orig_id = Math.ceil(Math.random() * 100000);
                 $(input).attr('id', info.data.orig_id);
             }
-            info.data.values = [];
+            
             $('#'+info.data.orig_id+' option:selected').each(function () {
                 info.data.values.push(this.value);
             });
@@ -50,12 +61,16 @@
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
             new_select += '   <div class="supsel_select supsel_topoff" tabindex="0" style="width: '+info.options.select_width+'px;">';
-            new_select += '     <span>Select option</span>';
-            new_select += '     <div class="supsel_arrow_down"></div>';
+            new_select += '       <div class="supsel_select_values">Select option</div>';
+            new_select += '       <div class="'+(info.data.multiple ? 'supsel_select_add': 'supsel_select_arrow supsel_arrow_down')+'"></div>';
+            new_select += '       <div class="supsel_clear"></div>';
             new_select += '   </div>';
             new_select += '   <div class="supsel_info" style="width: '+info.options.info_width+'px;">';
             new_select += '       <div class="supsel_search"><input type="text" value="" /></div>';
-            new_select += '       <div class="supsel_results"><ul></ul></div>';
+            new_select += '       <div class="supsel_results">';
+            new_select += '           <div class="supsel_noresults">No Results Found</div>';
+            new_select += '           <div class="supsel_results_list"><ul></ul></div>';
+            new_select += '       </div>';
             new_select += '   </div>';
             new_select += '</div>';
             var new_results = '';
@@ -66,10 +81,10 @@
 
             /* Set items from original select */
             info.data.orig_select.attr('tabindex', '-1');
-            //info.data.supsel_select.find('.supsel_search input').attr('tabindex', '2');
+            info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
 
             /* Hide original select dropdown */
-            //info.data.orig_select.hide();
+            info.data.orig_select.hide();
 
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
@@ -77,16 +92,31 @@
             /* Append values from original select and create array */
             info.data.orig_select.find(' > option').each(function() {
                 new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
+                info.data.orig_values[this.value] = this.text;
             });
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            info.data.supsel_select.find('.supsel_select').click(function(){
-                if(info.data.is_shown){
-                    info.hide_results();
-                } else {
-                    info.show_results();
-                }
+            if(info.data.multiple){
+                info.data.supsel_select.find('.supsel_select .supsel_select_add').click(function(){
+                    if(info.data.is_shown){
+                        info.hide_results();
+                    } else {
+                        info.show_results();
+                    }
+                });
+            } else {
+                info.data.supsel_select.find('.supsel_select').click(function(){
+                    if(info.data.is_shown){
+                        info.hide_results();
+                    } else {
+                        info.show_results();
+                    }
+                });
+            }
+            
+            info.data.supsel_select.find('.supsel_select .supsel_select_item').click(function(){
+                console.log('Click item');
             });
 
             /* Add tab focus to supsel_select */
@@ -101,6 +131,8 @@
                 if($(event.target).parents().index(info.data.supsel_select) == -1) {
                     if(info.data.is_shown) {
                         info.hide_results();
+                        info.search_clear();
+                        info.set_display_values();
                     }
                 }
             });
@@ -110,18 +142,24 @@
                 if(info.data.multiple){
                     /* Push multiple values */
                     info.data.values.push($(this).attr('data-value'));
+                    info.hide_results();
                 } else {
                     /* Set single value */
                     info.data.values = [$(this).attr('data-value')];
+                    info.hide_results();
                 }
 
                 info.set_select_values();
                 info.set_display_values();
             });
 
+            /* Add key event to search input */
+            info.data.supsel_select.find('.supsel_search input').keyup(function(){
+                info.search(this.value);
+            });
+
             /* Select dropdown based upon dropdown value */
             info.set_display_values();
-
 
         },
         set_values: function(values) {
@@ -148,21 +186,41 @@
                 info.data.orig_select.val(info.data.values);
             }
         },
+        set_display_blank: function() {
+            var info = this;
+
+            info.data.supsel_select.find('.supsel_select .supsel_select_values').html('<span class="show_blank">'+info.options.blank_option+'</span>');
+        },
         set_display_values: function() {
             var info = this;
 
-            if(info.data.multiple) {
-                /* Hide multiple selected values */
-                info.data.supsel_select.find('.supsel_info li').removeClass('supsel_on supsel_hide');
-                $.each(info.data.values, function(index, value) {
-                    info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_hide');
-                });
+            if(info.data.values.length === 0 || info.data.values[0] == ''){
+                info.set_display_blank();
             } else {
-                /* Set style for selected single value */
-                info.data.supsel_select.find('.supsel_info li').removeClass('supsel_on supsel_hide');
-                $.each(info.data.values, function(index, value) {
-                    info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
-                });
+                if(info.data.multiple) {
+                    var multi_values = '';
+
+                    /* Set supsel_select_values value */
+                    $.each(info.data.values, function(index, value) {
+                        multi_values += '<div data-value="'+value+'" class="supsel_select_item">'+info.data.orig_select.find('option[value="'+value+'"]').text()+'</div>';
+                    });
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html(multi_values);
+
+                    /* Hide multiple selected values */
+                    info.data.supsel_select.find('.supsel_info li').removeClass('supsel_show supsel_on supsel_hide');
+                    $.each(info.data.values, function(index, value) {
+                        info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_hide');
+                    });
+                } else {
+                    /* Set supsel_select_values value */
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html(info.data.orig_select.find('option[value="'+info.data.values[0]+'"]').text());
+
+                    /* Set style for selected single value */
+                    info.data.supsel_select.find('.supsel_info li').removeClass('supsel_show supsel_on supsel_hide');
+                    $.each(info.data.values, function(index, value) {
+                        info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
+                    });
+                }
             }
         },
         show_results: function() {
@@ -188,6 +246,74 @@
             info.data.supsel_select.find('.supsel_arrow_up').removeClass('supsel_arrow_up').addClass('supsel_arrow_down');
 
             info.data.is_shown = false;
+        },
+        search: function(input_value) {
+            var info = this;
+
+            info.data.search_values = [];
+
+            if(input_value != '') {
+                /* Take input_value and search array */
+                info.data.search_values = $.map(this.data.orig_values, function(value, key) {
+                    var search = new RegExp(input_value, 'gi');
+                    if(value.match(search)) {
+                        return key;
+                    } else {
+                        return null;
+                    }
+                });
+
+                info.search_hide_display_values();
+            } else {
+                info.search_clear();
+                info.set_display_values();
+                info.search_show_display_values();
+            }
+        },
+        search_clear: function() {
+            var info = this;
+
+            /* Clear search input */
+            info.data.supsel_select.find('.supsel_search input').val('');
+
+            /* Hide supsel_noresults */
+            info.data.supsel_select.find('.supsel_results .supsel_noresults').hide();
+
+            /* Remove class supsel_show_except supsel_show supsel_on */
+            info.data.supsel_select.find('.supsel_results').removeClass('supsel_show_except');
+            info.data.supsel_select.find('.supsel_results li').removeClass('supsel_show supsel_on');
+        },
+        search_hide_display_values: function() {
+            var info = this;
+
+            /* Remove class supsel_show supsel_on */
+            info.data.supsel_select.find('.supsel_results li').removeClass('supsel_show supsel_on');
+
+            /* Add class to results */
+            info.data.supsel_select.find('.supsel_results').addClass('supsel_show_except');
+
+            /* Add class supsel_show */
+            $.each(info.data.search_values, function(index, value) {
+                info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]:not(.supsel_hide)').addClass('supsel_show');
+            });
+
+            /* If no results show supsel_noresults */
+            if(info.data.supsel_select.find('.supsel_results li:visible').length > 0){
+                info.data.supsel_select.find('.supsel_results .supsel_noresults').hide();
+            } else {
+                info.data.supsel_select.find('.supsel_results .supsel_noresults').show();
+            }
+        },
+        search_show_display_values: function() {
+            var info = this;
+
+            /* Remove class to results */
+            info.data.supsel_select.find('.search_results').removeClass('supsel_show_except');
+
+            /* Remove class supsel_show */
+            info.data.supsel_select.find('.search_results li').removeClass('supsel_show');
+
+            info.set_display_values();
         },
         destroy: function() {
             var info = $(this).data('superselect');
