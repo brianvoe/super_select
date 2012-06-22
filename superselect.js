@@ -81,7 +81,7 @@
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            info.data.supsel_select.find('.supsel_select').mousedown(function(){
+            info.data.supsel_select.find('.supsel_select').click(function(){
                 if(info.data.is_shown){
                     info.hide_results();
                 } else {
@@ -90,14 +90,14 @@
             });
 
             /* Add tab focus to supsel_select */
-            info.data.supsel_select.find('.supsel_select').focusin(function(){
-                if(!info.data.is_shown){
-                    info.show_results();
-                }
-            });
+            // info.data.supsel_select.find('.supsel_select').focusin(function(){
+            //     if(!info.data.is_shown){
+            //         info.show_results();
+            //     }
+            // });
 
             /* Detect if click outside of supsel */
-            $(document).click(function(event) { 
+            $(document).click(function(event) {
                 if($(event.target).parents().index(info.data.supsel_select) == -1) {
                     if(info.data.is_shown) {
                         info.hide_results();
