@@ -34,6 +34,13 @@
 }
 .supsel_div .supsel_select_values .supsel_select_item {
 	float: left;
+	border: solid 1px #000000;
+}
+.supsel_div .supsel_select_item .supsel_select_item_del {
+	float: right;
+	height: 12px;
+	width: 12px;
+	background: #fff url('superselect.png') no-repeat 100% 0px;
 }
 .supsel_div .supsel_select_add {
 	float: right;

@@ -114,10 +114,6 @@
                     }
                 });
             }
-            
-            info.data.supsel_select.find('.supsel_select .supsel_select_item').click(function(){
-                console.log('Click item');
-            });
 
             /* Add tab focus to supsel_select */
             // info.data.supsel_select.find('.supsel_select').focusin(function(){
@@ -202,9 +198,17 @@
 
                     /* Set supsel_select_values value */
                     $.each(info.data.values, function(index, value) {
-                        multi_values += '<div data-value="'+value+'" class="supsel_select_item">'+info.data.orig_select.find('option[value="'+value+'"]').text()+'</div>';
+                        multi_values += '<div data-value="'+value+'" class="supsel_select_item">';
+                        multi_values +=     info.data.orig_select.find('option[value="'+value+'"]').text();
+                        multi_values += '   <div class="supsel_select_item_del"></div>';
+                        multi_values += '</div>';
                     });
                     info.data.supsel_select.find('.supsel_select .supsel_select_values').html(multi_values);
+
+                    /* Add click event to items */
+                    info.data.supsel_select.find('.supsel_select .supsel_select_item_del').click(function(){
+                        console.log('clicky');
+                    });
 
                     /* Hide multiple selected values */
                     info.data.supsel_select.find('.supsel_info li').removeClass('supsel_show supsel_on supsel_hide');
