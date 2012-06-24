@@ -34,19 +34,30 @@
 }
 .supsel_div .supsel_select_values .supsel_select_item {
 	float: left;
-	border: solid 1px #000000;
+	padding: 3px;
+	margin: 3px;
+	border: solid 1px #aaaaaa;
+	border-radius: 5px;
+	-moz-border-radius: 5px;
+	-webkit-border-radius: 5px;
+	background-color: #e4e4e4;
+}
+.supsel_div .supsel_select_item .supsel_select_item_text {
+	float: left;
 }
 .supsel_div .supsel_select_item .supsel_select_item_del {
+	position: relative;
 	float: right;
+	margin: 4px 0px 0px 10px;
 	height: 12px;
 	width: 12px;
-	background: #fff url('superselect.png') no-repeat 100% 0px;
+	background: #e4e4e4 url('superselect.png') no-repeat 100% 0px;
 }
 .supsel_div .supsel_select_add {
 	float: right;
-	height: 13px;
-	width: 10px;
-	border: solid 1px #000000;
+	height: 12px;
+	width: 12px;
+	background: #fff url('superselect.png') no-repeat -35px 0px;
 }
 .supsel_div .supsel_arrow_down {
 	float: right;

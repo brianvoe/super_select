@@ -11,8 +11,8 @@
     /* Select Options */
     var select_options = {
         blank_option: 'Choose option...',
-        select_width: 150,
-        info_width: 300
+        select_width: 300,
+        info_width: 350
     };
 
     var select_data = {
@@ -97,23 +97,13 @@
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
             /* Add click to supsel_select */
-            if(info.data.multiple){
-                info.data.supsel_select.find('.supsel_select .supsel_select_add').click(function(){
-                    if(info.data.is_shown){
-                        info.hide_results();
-                    } else {
-                        info.show_results();
-                    }
-                });
-            } else {
-                info.data.supsel_select.find('.supsel_select').click(function(){
-                    if(info.data.is_shown){
-                        info.hide_results();
-                    } else {
-                        info.show_results();
-                    }
-                });
-            }
+            info.data.supsel_select.find('.supsel_select').click(function(){
+                if(info.data.is_shown){
+                    info.hide_results();
+                } else {
+                    info.show_results();
+                }
+            });
 
             /* Add tab focus to supsel_select */
             // info.data.supsel_select.find('.supsel_select').focusin(function(){
@@ -176,11 +166,7 @@
         set_select_values: function() {
             var info = this;
 
-            if(info.data.multiple) {
-                info.data.orig_select.val(info.data.values);
-            } else {
-                info.data.orig_select.val(info.data.values);
-            }
+            info.data.orig_select.val(info.data.values);
         },
         set_display_blank: function() {
             var info = this;
@@ -199,7 +185,7 @@
                     /* Set supsel_select_values value */
                     $.each(info.data.values, function(index, value) {
                         multi_values += '<div data-value="'+value+'" class="supsel_select_item">';
-                        multi_values +=     info.data.orig_select.find('option[value="'+value+'"]').text();
+                        multi_values += '   <div class="supsel_select_item_text">'+info.data.orig_select.find('option[value="'+value+'"]').text()+'</div>';
                         multi_values += '   <div class="supsel_select_item_del"></div>';
                         multi_values += '</div>';
                     });
@@ -207,7 +193,12 @@
 
                     /* Add click event to items */
                     info.data.supsel_select.find('.supsel_select .supsel_select_item_del').click(function(){
-                        console.log('clicky');
+                        /* Remove value from array */
+                        info.data.values.splice($.inArray($(this).parent().attr('data-value'), info.data.values), 1);
+
+                        /* Set values and reset display */
+                        info.set_select_values();
+                        info.set_display_values();
                     });
 
                     /* Hide multiple selected values */
