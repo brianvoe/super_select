@@ -12,13 +12,18 @@
     var select_options = {
         blank_option: 'Choose option...',
         select_width: 300,
-        info_width: 350
+        info_width: 350,
+        /* Ajax variables */
+        ajax_url: '',
+        ajax_data: {},
+        ajax_search_name: 'superselect_search'
     };
 
     var select_data = {
         /* Status */
         multiple: false,
         is_shown: false,
+        is_ajax: false,
         /* ids and select */
         orig_id: '',
         orig_select: null,
@@ -66,7 +71,7 @@
             new_select += '       <div class="supsel_clear"></div>';
             new_select += '   </div>';
             new_select += '   <div class="supsel_info" style="width: '+info.options.info_width+'px;">';
-            new_select += '       <div class="supsel_search"><input type="text" value="" /></div>';
+            new_select += '       <div class="supsel_search"><input placeholder="Search..." type="text" value="" /></div>';
             new_select += '       <div class="supsel_results">';
             new_select += '           <div class="supsel_noresults">No Results Found</div>';
             new_select += '           <div class="supsel_results_list"><ul></ul></div>';
@@ -82,12 +87,19 @@
             /* Set items from original select */
             info.data.orig_select.attr('tabindex', '-1');
             info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
+            info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
             info.data.orig_select.hide();
 
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
+
+            /* If ajax clear out select */
+            if(info.data.is_ajax){
+                info.data.orig_select.html('');
+                info.data.values = [];
+            }
 
             /* Append values from original select and create array */
             info.data.orig_select.find(' > option').each(function() {
@@ -124,20 +136,22 @@
             });
 
             /* Add click events to results li */
-            info.data.supsel_select.find('.supsel_results ul li').click(function() {
-                if(info.data.multiple){
-                    /* Push multiple values */
-                    info.data.values.push($(this).attr('data-value'));
-                    info.hide_results();
-                } else {
-                    /* Set single value */
-                    info.data.values = [$(this).attr('data-value')];
-                    info.hide_results();
-                }
+            if(!info.data.is_ajax){
+                info.data.supsel_select.find('.supsel_results ul li').click(function() {
+                    if(info.data.multiple){
+                        /* Push multiple values */
+                        info.data.values.push($(this).attr('data-value'));
+                        info.hide_results();
+                    } else {
+                        /* Set single value */
+                        info.data.values = [$(this).attr('data-value')];
+                        info.hide_results();
+                    }
 
-                info.set_select_values();
-                info.set_display_values();
-            });
+                    info.set_select_values();
+                    info.set_display_values();
+                });
+            }
 
             /* Add key event to search input */
             info.data.supsel_select.find('.supsel_search input').keyup(function(){
@@ -257,22 +271,44 @@
             info.data.search_values = [];
 
             if(input_value != '') {
-                /* Take input_value and search array */
-                info.data.search_values = $.map(this.data.orig_values, function(value, key) {
-                    var search = new RegExp(input_value, 'gi');
-                    if(value.match(search)) {
-                        return key;
-                    } else {
-                        return null;
-                    }
-                });
+                if(info.data.is_ajax) {
+                    /* Ajax Search requested location */
+                    var search_name = {};
+                    search_name[info.options.ajax_search_name] = input_value;
+                    $.ajax({
+                        url: info.options.ajax_url,
+                        type: 'POST',
+                        dataType: 'json',
+                        data: $.extend({}, info.options.ajax_data, search_name),
+                        success: function(data){
+                            info._process_ajax(data);
+                        }
+                    });
+                } else {
+                    /* Take input_value and search array */
+                    info.data.search_values = $.map(this.data.orig_values, function(value, key) {
+                        var search = new RegExp(input_value, 'gi');
+                        if(value.match(search)) {
+                            return key;
+                        } else {
+                            return null;
+                        }
+                    });
 
-                info.search_hide_display_values();
+                    info.search_hide_display_values();
+                }
             } else {
                 info.search_clear();
                 info.set_display_values();
                 info.search_show_display_values();
             }
+        },
+        _process_ajax: function(data) {
+            var info = this;
+
+            console.log(data);
+
+
         },
         search_clear: function() {
             var info = this;
