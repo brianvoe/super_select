@@ -151,13 +151,22 @@
         set_values: function(values) {
             var info = $(this).data('superselect');
 
+            info.data.values = [];
             if($.isArray(values)) {
-                info.data.values = [];
                 $.each(values, function(index, value) {
-                    info.data.values.push(value);
+                    /* Check to ensure values exist */
+                    if(info.data.orig_select.find('option[value="'+value+'"]').length > 0){
+                        if(info.data.multiple) {
+                            info.data.values.push(value);
+                        } else {
+                            info.data.values = [value];
+                        }
+                    }
                 });
             } else {
-                info.data.values = [values];
+                if(info.data.orig_select.find('option[value="'+values+'"]').length > 0){
+                    info.data.values = [values];
+                }
             }
 
             info.set_select_values();
