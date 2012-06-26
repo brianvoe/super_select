@@ -90,16 +90,10 @@
             info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
-            //info.data.orig_select.hide();
+            info.data.orig_select.hide();
 
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
-
-            /* If ajax clear out select */
-            if(info.data.is_ajax){
-                info.data.orig_select.html('');
-                info.data.values = [];
-            }
 
             /* Append values from original select and create array */
             info.data.orig_select.find(' > option').each(function() {
