@@ -73,7 +73,7 @@
 }
 .supsel_div .supsel_info {
 	display: none;
-	position: relative;
+	position: absolute;
 	z-index: 1;
 	padding: 5px;
 	margin: -1px 0px 0px 0px;
@@ -81,6 +81,7 @@
 	border-radius: 0px 5px 5px 5px;
 	-moz-border-radius: 0px 5px 5px 5px;
 	-webkit-border-radius: 0px 5px 5px 5px;
+	background-color: #ffffff;
 }
 .supsel_div .supsel_info .supsel_search input {
 	width: 100%;

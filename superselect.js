@@ -240,6 +240,9 @@
             info.data.supsel_select.find('.supsel_info').show();
             /* Focus on search box */
             info.data.supsel_select.find('.supsel_search input').focus();
+            /* Change z-index */
+            info.data.supsel_select.find('.supsel_select').css('z-index', 100);
+            info.data.supsel_select.find('.supsel_info').css('z-index', 99);
             /* Change select style */
             info.data.supsel_select.find('.supsel_topoff').removeClass('supsel_topoff').addClass('supsel_topon');
             /* Change arrow image */
@@ -251,6 +254,9 @@
             var info = this;
 
             info.data.supsel_select.find('.supsel_info').hide();
+            /* Change z-index */
+            info.data.supsel_select.find('.supsel_select').css('z-index', 2);
+            info.data.supsel_select.find('.supsel_info').css('z-index', 1);
             /* Change select style */
             info.data.supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
             /* Change arrow image */
