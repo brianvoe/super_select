@@ -122,8 +122,14 @@
 			
 			 /* Add tab focus to supsel_select */
 			info.data.supsel_select.find('.supsel_select').focus(function(){
-			    if (!info.is_click)
-			        $(this).click();
+			    if(!info.is_click){
+			    	$(this).click();
+			    }   
+			});
+			info.data.supsel_select.find('.supsel_results').focusout(function(){
+                if(info.data.is_shown){
+                    info.hide_results();
+                }
 			});
 
 
