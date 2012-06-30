@@ -126,11 +126,64 @@
 			    	$(this).click();
 			    }   
 			});
-			info.data.supsel_select.find('.supsel_results').focusout(function(){
-                if(info.data.is_shown){
-                    info.hide_results();
-                }
-			});
+			var chosen = "";
+			info.data.supsel_select.find('.supsel_search').keydown(function(e){ // 38-up, 40-down
+			    if (e.keyCode == 40) {
+			        if(chosen === "") {
+			            chosen = 0;
+			        } else if((chosen+1) < info.data.supsel_select.find('li').filter(':visible').length) {
+			            chosen++;
+			        }
+			        console.log(chosen);
+			        var li = info.data.supsel_select.find('li');
+			        li.removeClass('supsel_on_key');
+			        var current_li = li.filter(':visible').filter(':eq('+chosen+')');
+			        if(!current_li.position()){
+			        	chosen = 0;
+			        	current_li = li.filter(':visible').filter(':eq('+chosen+')');
+			        }
+					current_li.addClass('supsel_on_key');
+			        
+			        maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
+			        visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
+			        visible_bottom = maxHeight + visible_top;
+			        high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop();
+			        high_bottom = high_top + current_li.outerHeight();
+			        if (high_bottom >= visible_bottom) {
+			        	 info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+			       	} else if (high_top < visible_top) {
+			          info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
+			       	}
+			        return false;
+			    }
+			    if (e.keyCode == 38) {
+			        if(chosen === "") {
+			            chosen = 0;
+			        } else if(chosen > 0) {
+			            chosen--;            
+			        }
+			        var li = info.data.supsel_select.find('li');
+			        li.removeClass('supsel_on_key');
+			        var current_li = li.filter(':visible').filter(':eq('+chosen+')');
+			        if(!current_li.position()){
+			        	chosen = 0;
+			        	current_li = li.filter(':visible').filter(':eq('+chosen+')');
+			        }
+					current_li.addClass('supsel_on_key');
+			        
+			        maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
+			        visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
+			        visible_bottom = maxHeight + visible_top;
+			        high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop()-70;
+			        high_bottom = high_top + current_li.outerHeight();
+			        if (high_bottom >= visible_bottom) {
+			        	 info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+			       } else if (high_top < visible_top) {
+			          info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
+			       }
+			        return false;
+			    }
+			 });
 
 
             /* Detect if click outside of supsel */
