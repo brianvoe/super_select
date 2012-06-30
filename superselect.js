@@ -24,6 +24,7 @@
         multiple: false,
         is_shown: false,
         is_ajax: false,
+        is_click: false,
         /* ids and select */
         orig_id: '',
         orig_select: null,
@@ -111,17 +112,17 @@
                 }
             });
 
-           
+           	/*Stops from click */
             info.data.supsel_select.find('.supsel_select').mousedown(function(){
-			    $(this).data("mousedown", true);
+			    info.is_click = true;
 			});
 			info.data.supsel_select.find('.supsel_select').mouseup(function(){
-			    $(this).removeData("mousedown");
+			     info.is_click = false;
 			});
 			
 			 /* Add tab focus to supsel_select */
 			info.data.supsel_select.find('.supsel_select').focus(function(){
-			    if (!$(this).data("mousedown"))
+			    if (!info.is_click)
 			        $(this).click();
 			});
 
