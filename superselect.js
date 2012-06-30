@@ -111,12 +111,20 @@
                 }
             });
 
-            /* Add tab focus to supsel_select */
-            // info.data.supsel_select.find('.supsel_select').focusin(function(){
-            //     if(!info.data.is_shown){
-            //         info.show_results();
-            //     }
-            // });
+           
+            info.data.supsel_select.find('.supsel_select').mousedown(function(){
+			    $(this).data("mousedown", true);
+			});
+			info.data.supsel_select.find('.supsel_select').mouseup(function(){
+			    $(this).removeData("mousedown");
+			});
+			
+			 /* Add tab focus to supsel_select */
+			info.data.supsel_select.find('.supsel_select').focus(function(){
+			    if (!$(this).data("mousedown"))
+			        $(this).click();
+			});
+
 
             /* Detect if click outside of supsel */
             $(document).click(function(event) {
