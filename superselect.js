@@ -33,7 +33,7 @@
         /* Values */
         orig_values: {},
         search_values: {},
-        values: []
+        values: {}
     };
 
     var super_select_funcs = {
@@ -47,7 +47,7 @@
             /* Reset array values */
             info.data.orig_values = {};
             info.data.search_values = {};
-            info.data.values = [];
+            info.data.values = {};
             
             /* Set global variables */
             if ($(input).attr('id')) {
@@ -57,8 +57,8 @@
                 $(input).attr('id', info.data.orig_id);
             }
             
-            $('#'+info.data.orig_id+' option:selected').each(function() {
-                info.data.values.push(this.value);
+            $('#'+info.data.orig_id+' option:selected').each(function(index, value) {
+                info.data.values[index] = {'val':this.value, 'txt':this.text};
             });
             info.data.multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
             info.data.supsel_id = info.data.orig_id+'_supsel';
@@ -97,9 +97,9 @@
             info.data.supsel_select.insertAfter(info.data.orig_select);
 
             /* Append values from original select and create array */
-            info.data.orig_select.find(' > option').each(function() {
-                new_results += '<li data-value="'+this.value+'">'+this.text+'</li>';
-                info.data.orig_values[this.value] = this.text;
+            info.data.orig_select.find(' > option').each(function(index, value) {
+                new_results += '<li data-index="'+index+'" data-value="'+value+'">'+this.text+'</li>';
+                info.data.orig_values[index] = {'val':this.value, 'txt':this.text};
             });
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
@@ -353,7 +353,7 @@
         search: function(input_value) {
             var info = this;
 
-            info.data.search_values = [];
+            info.data.search_values = {};
 
             if(input_value != '') {
                 if(info.data.is_ajax) {
@@ -371,13 +371,11 @@
                     });
                 } else {
                     /* Take input_value and search array */
-                    info.data.search_values = $.map(this.data.orig_values, function(value, key) {
+                    $.each(this.data.orig_values, function(index, value) { 
                         var search = new RegExp(input_value, 'gi');
-                        if(value.match(search)) {
-                            return key;
-                        } else {
-                            return null;
-                        }
+                        if(value.txt.match(search)) {
+                            info.data.search_values[index] = {'val':value.val, 'txt':value.txt};
+                        } 
                     });
 
                     info.search_hide_display_values();
