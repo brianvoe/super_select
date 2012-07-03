@@ -61,7 +61,7 @@
                 info.data.values[index] = {
                     'val':this.value, 
                     'txt':this.text
-                    };
+                };
             });
             info.data.multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
             info.data.supsel_id = info.data.orig_id+'_supsel';
@@ -105,7 +105,7 @@
                 info.data.orig_values[index] = {
                     'val':this.value, 
                     'txt':this.text
-                    };
+                };
             });
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
@@ -133,8 +133,9 @@
                 }   
             });
             var chosen = "";
-            info.data.supsel_select.find('.supsel_search').keydown(function(e){ // 38-up, 40-down
-                shift =  e.shiftKey; 	
+            info.data.supsel_select.find('.supsel_search').keydown(function(e){
+                shift =  e.shiftKey;
+                /* Key down */
                 if (e.keyCode == 40) {			    	
                     if(chosen === "") {
                         chosen = 0;
@@ -164,6 +165,7 @@
                     }
                     return false;
                 }
+                /* Key up */
                 if (e.keyCode == 38) {
                     if(chosen === "") {
                         chosen = 0;
@@ -191,15 +193,23 @@
                     }
                     return false;
                 }
+                /* Key enter */
                 if(e.keyCode == 13){
                     if(info.data.multiple){
                         /* Push multiple values */
                         info.data.supsel_select.find('.supsel_on_key').each(function(){
-                            info.data.values.push($(this).attr('data-value'));
-                        })                        
+                            info.data.values[$(this).attr('data-index')] = {
+                                'val':$(this).attr('data-value'),
+                                'txt':$(this).html();
+                            };
+                        });
                     } else {
                         /* Set single value */
-                        info.data.values = [info.data.supsel_select.find('.supsel_on_key').attr('data-value')];
+                        info.data.values = {};
+                        info.data.values[info.data.supsel_select.find('.supsel_on_key').attr('data-index')] = {
+                            'val':info.data.supsel_select.find('.supsel_on_key').attr('data-value'),
+                            'txt':info.data.supsel_select.find('.supsel_on_key').html()
+                        };
                     }
 
                     info.hide_results();
@@ -226,10 +236,17 @@
                 info.data.supsel_select.find('.supsel_results ul li').click(function() {
                     if(info.data.multiple){
                         /* Push multiple values */
-                        info.data.values.push($(this).attr('data-value'));
+                        info.data.values[$(this).attr('data-index')] = {
+                            'val':$(this).attr('data-value'),
+                            'txt':$(this).html();
+                        };
                     } else {
                         /* Set single value */
-                        info.data.values = [$(this).attr('data-value')];
+                        info.data.values = {};
+                        info.data.values[$(this).attr('data-index')] = {
+                            'val':$(this).attr('data-value'),
+                            'txt':$(this).html()
+                        };
                     }
 
                     info.hide_results();
@@ -250,21 +267,26 @@
         set_values: function(values) {
             var info = $(this).data('superselect');
 
-            info.data.values = [];
             if($.isArray(values)) {
                 $.each(values, function(index, value) {
                     /* Check to ensure values exist */
                     if(info.data.orig_select.find('option[value="'+value+'"]').length > 0){
-                        if(info.data.multiple) {
-                            info.data.values.push(value);
-                        } else {
-                            info.data.values = [value];
+                        if(!info.data.multiple) {
+                            info.data.values = {};
                         }
+                        info.data.values[info.data.orig_select.find('option[value="'+value+'"]:eq(0)').index()] = {
+                            'val':info.data.orig_select.find('option[value="'+value+'"]:eq(0)').attr('data-value'),
+                            'txt':info.data.orig_select.find('option[value="'+value+'"]:eq(0)').text()
+                        };
                     }
                 });
             } else {
                 if(info.data.orig_select.find('option[value="'+values+'"]').length > 0){
-                    info.data.values = [values];
+                    info.data.values = {};
+                    info.data.values[info.data.orig_select.find('option[value="'+values+'"]:eq(0)').index()] = {
+                        'val':info.data.orig_select.find('option[value="'+values+'"]:eq(0)').attr('data-value'),
+                        'txt':info.data.orig_select.find('option[value="'+values+'"]:eq(0)').text()
+                    };
                 }
             }
 
@@ -274,7 +296,14 @@
         set_select_values: function() {
             var info = this;
 
-            info.data.orig_select.val(info.data.values);
+            info.data.orig_select.find('option').removeAttr('selected');
+            $.each(info.data.values, function(index, value) {
+                if(info.data.multiple) {
+                    info.data.orig_select.find('option:eq('+index+')').attr('selected', true);
+                } else {
+                    info.data.orig_select.val(value);
+                }
+            });
         },
         set_display_blank: function() {
             var info = this;
@@ -284,7 +313,7 @@
         set_display_values: function() {
             var info = this;
 
-            if(info.data.values.length === 0 || info.data.values[0] == ''){
+            if(info.data.values.length === 0){
                 info.set_display_blank();
             } else {
                 if(info.data.multiple) {
@@ -292,8 +321,8 @@
 
                     /* Set supsel_select_values value */
                     $.each(info.data.values, function(index, value) {
-                        multi_values += '<div data-value="'+value+'" class="supsel_select_item">';
-                        multi_values += '   <div class="supsel_select_item_text">'+info.data.orig_select.find('option[value="'+value+'"]').text()+'</div>';
+                        multi_values += '<div data-index="'+index+'" data-value="'+value.val+'" class="supsel_select_item">';
+                        multi_values += '   <div class="supsel_select_item_text">'+value.txt+'</div>';
                         multi_values += '   <div class="supsel_select_item_del"></div>';
                         multi_values += '</div>';
                     });
@@ -302,7 +331,7 @@
                     /* Add click event to items */
                     info.data.supsel_select.find('.supsel_select .supsel_select_item_del').click(function(){
                         /* Remove value from array */
-                        info.data.values.splice($.inArray($(this).parent().attr('data-value'), info.data.values), 1);
+                        delete info.data.values[$(this).parent().attr('data-index')];
 
                         /* Set values and reset display */
                         info.set_select_values();
@@ -312,16 +341,18 @@
                     /* Hide multiple selected values */
                     info.data.supsel_select.find('.supsel_info li').removeClass('supsel_show supsel_on supsel_hide');
                     $.each(info.data.values, function(index, value) {
-                        info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_hide');
+                        info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]').addClass('supsel_hide');
                     });
                 } else {
                     /* Set supsel_select_values value */
-                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html(info.data.orig_select.find('option[value="'+info.data.values[0]+'"]').text());
+                    $.each(info.data.values, function(index, value) {
+                        info.data.supsel_select.find('.supsel_select .supsel_select_values').html(info.data.orig_select.find('option:eq('+index+')').text());
+                    });
 
                     /* Set style for selected single value */
                     info.data.supsel_select.find('.supsel_info li').removeClass('supsel_show supsel_on supsel_hide');
                     $.each(info.data.values, function(index, value) {
-                        info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]').addClass('supsel_on');
+                        info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]').addClass('supsel_on');
                     });
                 }
             }
@@ -383,7 +414,7 @@
                             info.data.search_values[index] = {
                                 'val':value.val, 
                                 'txt':value.txt
-                                };
+                            };
                         } 
                     });
 
@@ -410,10 +441,17 @@
             info.data.supsel_select.find('.supsel_results ul li').click(function() {
                 if(info.data.multiple){
                     /* Push multiple values */
-                    info.data.values.push($(this).attr('data-value'));
+                    info.data.values[$(this).attr('data-index')] = {
+                        'val':$(this).attr('data-value'),
+                        'txt':$(this).html();
+                    };
                 } else {
                     /* Set single value */
-                    info.data.values = [$(this).attr('data-value')];
+                    info.data.values = {};
+                    info.data.values[$(this).attr('data-index')] = {
+                        'val':$(this).attr('data-value'),
+                        'txt':$(this).html();
+                    };
 
                     var value = $(this).attr('data-value');
                     var text = $(this).html();
@@ -457,7 +495,7 @@
 
             /* Add class supsel_show */
             $.each(info.data.search_values, function(index, value) {
-                info.data.supsel_select.find('.supsel_results li[data-value="'+value+'"]:not(.supsel_hide)').addClass('supsel_show');
+                info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show');
             });
 
             /* If no results show supsel_noresults */
