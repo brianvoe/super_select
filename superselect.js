@@ -58,7 +58,10 @@
             }
             
             $('#'+info.data.orig_id+' option:selected').each(function(index, value) {
-                info.data.values[index] = {'val':this.value, 'txt':this.text};
+                info.data.values[index] = {
+                    'val':this.value, 
+                    'txt':this.text
+                    };
             });
             info.data.multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
             info.data.supsel_id = info.data.orig_id+'_supsel';
@@ -99,7 +102,10 @@
             /* Append values from original select and create array */
             info.data.orig_select.find(' > option').each(function(index, value) {
                 new_results += '<li data-index="'+index+'" data-value="'+value+'">'+this.text+'</li>';
-                info.data.orig_values[index] = {'val':this.value, 'txt':this.text};
+                info.data.orig_values[index] = {
+                    'val':this.value, 
+                    'txt':this.text
+                    };
             });
             info.data.supsel_select.find('.supsel_results ul').append(new_results);
 
@@ -112,85 +118,85 @@
                 }
             });
 
-           	/*Stops from click */
+            /*Stops from click */
             info.data.supsel_select.find('.supsel_select').mousedown(function(){
-			    info.is_click = true;
-			});
-			info.data.supsel_select.find('.supsel_select').mouseup(function(){
-			     info.is_click = false;
-			});
+                info.is_click = true;
+            });
+            info.data.supsel_select.find('.supsel_select').mouseup(function(){
+                info.is_click = false;
+            });
 			
-			 /* Add tab focus to supsel_select */
-			info.data.supsel_select.find('.supsel_select').focus(function(){
-			    if(!info.is_click){
-			    	$(this).click();
-			    }   
-			});
-			var chosen = "";
-			info.data.supsel_select.find('.supsel_search').keydown(function(e){ // 38-up, 40-down
-			    shift =  e.shiftKey; 	
-			    if (e.keyCode == 40) {			    	
-			        if(chosen === "") {
-			            chosen = 0;
-			        } else if((chosen+1) < info.data.supsel_select.find('li').filter(':visible').length) {
-			            chosen++;
-			        }			        
-			        var li = info.data.supsel_select.find('li');
-			        if(!shift || !info.data.multiple){
-			        	li.removeClass('supsel_on_key');
-			        }
-			        var current_li = li.filter(':visible').filter(':eq('+chosen+')');
-			        if(!current_li.position()){
-			        	chosen = 0;
-			        	current_li = li.filter(':visible').filter(':eq('+chosen+')');
-			        }
-					current_li.addClass('supsel_on_key');
+            /* Add tab focus to supsel_select */
+            info.data.supsel_select.find('.supsel_select').focus(function(){
+                if(!info.is_click){
+                    $(this).click();
+                }   
+            });
+            var chosen = "";
+            info.data.supsel_select.find('.supsel_search').keydown(function(e){ // 38-up, 40-down
+                shift =  e.shiftKey; 	
+                if (e.keyCode == 40) {			    	
+                    if(chosen === "") {
+                        chosen = 0;
+                    } else if((chosen+1) < info.data.supsel_select.find('li').filter(':visible').length) {
+                        chosen++;
+                    }			        
+                    var li = info.data.supsel_select.find('li');
+                    if(!shift || !info.data.multiple){
+                        li.removeClass('supsel_on_key');
+                    }
+                    var current_li = li.filter(':visible').filter(':eq('+chosen+')');
+                    if(!current_li.position()){
+                        chosen = 0;
+                        current_li = li.filter(':visible').filter(':eq('+chosen+')');
+                    }
+                    current_li.addClass('supsel_on_key');
 			        
-			        maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
-			        visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
-			        visible_bottom = maxHeight + visible_top;
-			        high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop();
-			        high_bottom = high_top + current_li.outerHeight();
-			        if (high_bottom >= visible_bottom) {
-			        	 info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-			       	} else if (high_top < visible_top) {
-			          info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
-			       	}
-			        return false;
-			    }
-			    if (e.keyCode == 38) {
-			        if(chosen === "") {
-			            chosen = 0;
-			        } else if(chosen > 0) {
-			            chosen--;            
-			        }
-			        var li = info.data.supsel_select.find('li');
-			        li.removeClass('supsel_on_key');
-			        var current_li = li.filter(':visible').filter(':eq('+chosen+')');
-			        if(!current_li.position()){
-			        	chosen = 0;
-			        	current_li = li.filter(':visible').filter(':eq('+chosen+')');
-			        }
-					current_li.addClass('supsel_on_key');
+                    maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
+                    visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
+                    visible_bottom = maxHeight + visible_top;
+                    high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop();
+                    high_bottom = high_top + current_li.outerHeight();
+                    if (high_bottom >= visible_bottom) {
+                        info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+                    } else if (high_top < visible_top) {
+                        info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
+                    }
+                    return false;
+                }
+                if (e.keyCode == 38) {
+                    if(chosen === "") {
+                        chosen = 0;
+                    } else if(chosen > 0) {
+                        chosen--;            
+                    }
+                    var li = info.data.supsel_select.find('li');
+                    li.removeClass('supsel_on_key');
+                    var current_li = li.filter(':visible').filter(':eq('+chosen+')');
+                    if(!current_li.position()){
+                        chosen = 0;
+                        current_li = li.filter(':visible').filter(':eq('+chosen+')');
+                    }
+                    current_li.addClass('supsel_on_key');
 			        
-			        maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
-			        visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
-			        visible_bottom = maxHeight + visible_top;
-			        high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop()-70;
-			        high_bottom = high_top + current_li.outerHeight();
-			        if (high_bottom >= visible_bottom) {
-			        	 info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-			       } else if (high_top < visible_top) {
-			          info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
-			       }
-			        return false;
-			    }
-			    if(e.keyCode == 13){
-			    	if(info.data.multiple){
+                    maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css("maxHeight"), 10);
+                    visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
+                    visible_bottom = maxHeight + visible_top;
+                    high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop()-70;
+                    high_bottom = high_top + current_li.outerHeight();
+                    if (high_bottom >= visible_bottom) {
+                        info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+                    } else if (high_top < visible_top) {
+                        info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
+                    }
+                    return false;
+                }
+                if(e.keyCode == 13){
+                    if(info.data.multiple){
                         /* Push multiple values */
-                       info.data.supsel_select.find('.supsel_on_key').each(function(){
-                       		info.data.values.push($(this).attr('data-value'));
-                       })                        
+                        info.data.supsel_select.find('.supsel_on_key').each(function(){
+                            info.data.values.push($(this).attr('data-value'));
+                        })                        
                     } else {
                         /* Set single value */
                         info.data.values = [info.data.supsel_select.find('.supsel_on_key').attr('data-value')];
@@ -200,8 +206,8 @@
                     info.set_select_values();
                     info.set_display_values();
                     info.data.supsel_select.find('li').removeClass('supsel_on_key');
-			    }
-			 });
+                }
+            });
 
 
             /* Detect if click outside of supsel */
@@ -374,7 +380,10 @@
                     $.each(this.data.orig_values, function(index, value) { 
                         var search = new RegExp(input_value, 'gi');
                         if(value.txt.match(search)) {
-                            info.data.search_values[index] = {'val':value.val, 'txt':value.txt};
+                            info.data.search_values[index] = {
+                                'val':value.val, 
+                                'txt':value.txt
+                                };
                         } 
                     });
 
