@@ -118,7 +118,7 @@
                 }
             });
 
-            /*Stops from click */
+            /* Stops from click */
             info.data.supsel_select.find('.supsel_select').mousedown(function(){
                 info.is_click = true;
             });
@@ -317,6 +317,8 @@
         },
         set_display_values: function() {
             var info = this;
+
+            console.log(info.data.values);
             
             if(Object.keys(info.data.values).length === 0){
                 info.set_display_blank();
