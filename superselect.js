@@ -101,7 +101,7 @@
 
             /* Append values from original select and create array */
             info.data.orig_select.find(' > option').each(function(index, value) {
-                new_results += '<li data-index="'+index+'" data-value="'+value+'">'+this.text+'</li>';
+                new_results += '<li data-index="'+index+'" data-value="'+this.value+'">'+this.text+'</li>';
                 info.data.orig_values[index] = {
                     'val':this.value, 
                     'txt':this.text
