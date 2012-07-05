@@ -77,8 +77,8 @@
             new_select += '   <div class="supsel_info" style="width: '+info.options.info_width+'px;">';
             new_select += '       <div class="supsel_search"><input placeholder="Search..." type="text" value="" /></div>';
             new_select += '       <div class="supsel_results">';
-            new_select += '           <div class="supsel_noresults">No Results Found</div>';
-            new_select += '           <div class="supsel_results_list"><ul></ul></div>';
+            new_select += '           <div class="supsel_noresults" tabindex="-1">No Results Found</div>';
+            new_select += '           <div class="supsel_results_list" tabindex="-1"><ul></ul></div>';
             new_select += '       </div>';
             new_select += '   </div>';
             new_select += '</div>';
@@ -217,6 +217,11 @@
                     info.set_display_values();
                     info.data.supsel_select.find('li').removeClass('supsel_on_key');
                 }
+                /* Tabbing out of sup_sel */
+                if(e.keyCode == 9){
+                	info.hide_results();
+                }
+
             });
 
 
