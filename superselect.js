@@ -317,8 +317,8 @@
         },
         set_display_values: function() {
             var info = this;
-
-            if(info.data.values.length === 0){
+            
+            if(Object.keys(info.data.values).length === 0){
                 info.set_display_blank();
             } else {
                 if(info.data.multiple) {
