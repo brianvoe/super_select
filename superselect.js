@@ -70,7 +70,7 @@
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
             new_select += '   <div class="supsel_select supsel_topoff" tabindex="0" style="width: '+info.options.select_width+'px;">';
-            new_select += '       <div class="supsel_select_values">Select option</div>';
+            new_select += '       <div class="supsel_select_values" style="width: '+info.options.select_width+'px;">Select option</div>';
             new_select += '       <div class="'+(info.data.multiple ? 'supsel_select_add': 'supsel_select_arrow supsel_arrow_down')+'"></div>';
             new_select += '       <div class="supsel_clear"></div>';
             new_select += '   </div>';
@@ -326,7 +326,7 @@
 
                     /* Set supsel_select_values value */
                     $.each(info.data.values, function(index, value) {
-                        multi_values += '<div data-index="'+index+'" data-value="'+value.val+'" class="supsel_select_item">';
+                        multi_values += '<div data-index="'+index+'" data-value="'+value.val+'" class="supsel_select_item" style="max-width: '+(info.options.select_width-15)+'px;overflow:hidden;">';
                         multi_values += '   <div class="supsel_select_item_text">'+value.txt+'</div>';
                         multi_values += '   <div class="supsel_select_item_del"></div>';
                         multi_values += '</div>';
