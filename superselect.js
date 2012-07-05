@@ -58,7 +58,7 @@
             }
             
             $('#'+info.data.orig_id+' option:selected').each(function(index, value) {
-                info.data.values[index] = {
+                info.data.values[this.index] = {
                     'val':this.value, 
                     'txt':this.text
                 };
@@ -94,7 +94,7 @@
             info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
-            info.data.orig_select.hide();
+            //info.data.orig_select.hide();
 
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
@@ -280,16 +280,18 @@
                             info.data.values = {};
                         }
                         info.data.values[info.data.orig_select.find('option[value="'+value+'"]:eq(0)').index()] = {
-                            'val':info.data.orig_select.find('option[value="'+value+'"]:eq(0)').attr('data-value'),
+                            'val':info.data.orig_select.find('option[value="'+value+'"]:eq(0)').val(),
                             'txt':info.data.orig_select.find('option[value="'+value+'"]:eq(0)').text()
                         };
                     }
                 });
             } else {
                 if(info.data.orig_select.find('option[value="'+values+'"]').length > 0){
-                    info.data.values = {};
+                    if(!info.data.multiple) {
+                        info.data.values = {};
+                    }
                     info.data.values[info.data.orig_select.find('option[value="'+values+'"]:eq(0)').index()] = {
-                        'val':info.data.orig_select.find('option[value="'+values+'"]:eq(0)').attr('data-value'),
+                        'val':info.data.orig_select.find('option[value="'+values+'"]:eq(0)').val(),
                         'txt':info.data.orig_select.find('option[value="'+values+'"]:eq(0)').text()
                     };
                 }
@@ -306,7 +308,7 @@
                 if(info.data.multiple) {
                     info.data.orig_select.find('option:eq('+index+')').attr('selected', true);
                 } else {
-                    info.data.orig_select.val(value);
+                    info.data.orig_select.val(value.val);
                 }
             });
         },
