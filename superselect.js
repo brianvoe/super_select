@@ -317,8 +317,6 @@
         },
         set_display_values: function() {
             var info = this;
-
-            console.log(info.data.values);
             
             if(Object.keys(info.data.values).length === 0){
                 info.set_display_blank();
@@ -340,9 +338,14 @@
                         /* Remove value from array */
                         delete info.data.values[$(this).parent().attr('data-index')];
 
+                        /* Remove div */
+                        $(this).parent().remove();
+
+                        /* Remove hide from li */
+                        info.data.supsel_select.find('.supsel_results li[data-index="'+$(this).parent().attr('data-index')+'"]').removeClass('supsel_hide');
+
                         /* Set values and reset display */
                         info.set_select_values();
-                        info.set_display_values();
                     });
 
                     /* Hide multiple selected values */
