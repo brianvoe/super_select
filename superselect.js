@@ -441,6 +441,8 @@
 
                 /* Set original select values */
                 info._set_select_values();
+
+                return false;
             });
         },
         _add_click_to_delete: function() {
@@ -477,7 +479,7 @@
                 if (e.keyCode == 40) {                  
                     if(li_pos === '') {
                         li_pos = 0;
-                    }else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
+                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
                         li_pos++;
                     }         
                                               

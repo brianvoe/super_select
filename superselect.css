@@ -74,6 +74,7 @@
 }
 .supsel_div .supsel_info {
     display: none;
+    outline: none;
     position: absolute;
     z-index: 1;
     padding: 5px;
@@ -108,6 +109,7 @@
     margin: 0px;
 }
 .supsel_div .supsel_info .supsel_results .supsel_results_list {
+    outline: none;
     margin: 0px;
     padding: 0px;
     max-height: 300px;
