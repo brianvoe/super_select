@@ -517,9 +517,6 @@
                                     'txt':value
                                 };
                             });
-
-                            /* Process ajax data */
-                            info._process_ajax_data();
                         }
                     });
                 } else {
