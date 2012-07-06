@@ -518,6 +518,8 @@
                     }
 
                     info.hide_results();
+                    info._set_display_select();
+                    info._set_display_results();
                     info._set_select_values();
                     info.data.supsel_select.find('li').removeClass('supsel_on_key');
                     
