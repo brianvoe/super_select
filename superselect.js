@@ -33,6 +33,7 @@
         /* Values */
         orig_values: {},
         search_values: {},
+        ajax_values: {},
         values: {}
     };
 
@@ -415,12 +416,23 @@
                         dataType: 'json',
                         data: $.extend({}, info.options.ajax_data, search_name),
                         success: function(data){
-                            info._process_ajax_data(data);
+                            /* Run through json data and add it to supsel data */
+                            info.data.ajax_values = {};
+                            $.each(data, function(index, value) {
+                                /* Randomize index on top of name so there are no duplicates */
+                                info.data.ajax_values[index+(Math.ceil(Math.random() * 1000))] = {
+                                    'val':index, 
+                                    'txt':value
+                                };
+                            });
+
+                            /* Process ajax data */
+                            info._process_ajax_data();
                         }
                     });
                 } else {
                     /* Take input_value and search array */
-                    $.each(this.data.orig_values, function(index, value) { 
+                    $.each(this.data.orig_values, function(index, value) {
                         var search = new RegExp(input_value, 'gi');
                         if(value.txt.match(search)) {
                             info.data.search_values[index] = {
@@ -438,35 +450,37 @@
                 info.search_show_display_values();
             }
         },
-        _process_ajax_data: function(data) {
+        _process_ajax_data: function() {
             var info = this;
             var results_li = '';
 
             // Take data from results and add to to display
             info.data.supsel_select.find('.supsel_results ul').html('');
-            $.each(data, function(key, value) {
-                results_li += '<li data-value="'+key+'">'+value+'</li>';
+            $.each(info.data.ajax_values, function(index, value) {
+                results_li += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
             });
             info.data.supsel_select.find('.supsel_results ul').append(results_li);
 
             // Add click event to newly added li
             info.data.supsel_select.find('.supsel_results ul li').click(function() {
+                var index = $(this).attr('data-index');
+                var value = $(this).attr('data-value');
+                var text = $(this).html();
                 if(info.data.multiple){
                     /* Push multiple values */
-                    info.data.values[$(this).attr('data-index')] = {
-                        'val':$(this).attr('data-value'),
-                        'txt':$(this).html()
+                    info.data.values[index] = {
+                        'val':value,
+                        'txt':text
                     };
+
+                    
                 } else {
                     /* Set single value */
                     info.data.values = {};
-                    info.data.values[$(this).attr('data-index')] = {
-                        'val':$(this).attr('data-value'),
-                        'txt':$(this).html()
+                    info.data.values[index] = {
+                        'val':value,
+                        'txt':text
                     };
-
-                    var value = $(this).attr('data-value');
-                    var text = $(this).html();
 
                     /* Hide results */
                     info.hide_results();
