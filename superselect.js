@@ -158,8 +158,10 @@
             info._add_key_events_to_results();
 
             /* Add key event to search input */
-            info.data.supsel_select.find('.supsel_search input').keyup(function(){
-                info.search(this.value);
+            info.data.supsel_select.find('.supsel_search input').keyup(function(e){
+                if(e.keyCode != 38 && e.keyCode != 40){ /* Exclude up and down arrows */
+                    info.search(this.value);
+                }
             });
 
             /* Set display select */
@@ -482,8 +484,9 @@
                     } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
                         li_pos++;
                     }         
-                                              
-                    info._highlight_scroll_li(li_pos);
+                    if(info.data.supsel_select.find('li').length > 0) {
+                        info._highlight_scroll_li(li_pos);
+                    }
                     return false;
                 }
                 
@@ -494,8 +497,9 @@
                     }else if(li_pos > 0) {
                         li_pos--;            
                     }
-                    
-                    info._highlight_scroll_li(li_pos); 
+                    if(info.data.supsel_select.find('li').length > 0) {
+                        info._highlight_scroll_li(li_pos);
+                    }
                                        
                     return false;
                 }
