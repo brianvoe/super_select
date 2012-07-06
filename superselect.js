@@ -399,68 +399,37 @@
         },
         _add_key_events_to_results: function() {
             var info = this;
-
             var li_pos = '';
+            
             info.data.supsel_select.find('.supsel_search').keydown(function(e){
+            	/* Shift Key also pressed*/
                 shift =  e.shiftKey;
+                                
                 /* Key down */
                 if (e.keyCode == 40) {                  
                     if(li_pos === '') {
                         li_pos = 0;
-                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
+                    }else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
                         li_pos++;
-                    }                   
-                    var li = info.data.supsel_select.find('li');
-                    if(!shift || !info.data.is_multiple){
-                        li.removeClass('supsel_on_key');
-                    }
-                    var current_li = li.filter(':visible').filter(':eq('+li_pos+')');
-                    if(!current_li.position()){
-                        li_pos = 0;
-                        current_li = li.filter(':visible').filter(':eq('+li_pos+')');
-                    }
-                    current_li.addClass('supsel_on_key');
-                    
-                    maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css('maxHeight'), 10);
-                    visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
-                    visible_bottom = maxHeight + visible_top;
-                    high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop();
-                    high_bottom = high_top + current_li.outerHeight();
-                    if (high_bottom >= visible_bottom) {
-                        info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-                    } else if (high_top < visible_top) {
-                        info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
-                    }
+                    }         
+                                              
+					info._highlight_scroll_li(li_pos);
                     return false;
                 }
+                
                 /* Key up */
                 if (e.keyCode == 38) {
                     if(li_pos === '') {
                         li_pos = 0;
-                    } else if(li_pos > 0) {
+                    }else if(li_pos > 0) {
                         li_pos--;            
                     }
-                    var li = info.data.supsel_select.find('li');
-                    li.removeClass('supsel_on_key');
-                    var current_li = li.filter(':visible').filter(':eq('+li_pos+')');
-                    if(!current_li.position()){
-                        li_pos = 0;
-                        current_li = li.filter(':visible').filter(':eq('+li_pos+')');
-                    }
-                    current_li.addClass('supsel_on_key');
                     
-                    maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css('maxHeight'), 10);
-                    visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
-                    visible_bottom = maxHeight + visible_top;
-                    high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop()-70;
-                    high_bottom = high_top + current_li.outerHeight();
-                    if (high_bottom >= visible_bottom) {
-                        info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
-                    } else if (high_top < visible_top) {
-                        info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
-                    }
+                    info._highlight_scroll_li(li_pos); 
+                                       
                     return false;
                 }
+                
                 /* Key enter */
                 if(e.keyCode == 13){
                     if(info.data.is_multiple){
@@ -484,13 +453,48 @@
                     info.set_select_values();
                     info.set_display_values();
                     info.data.supsel_select.find('li').removeClass('supsel_on_key');
+                    
+                    return false;
                 }
+                
                 /* Tabbing out of sup_sel */
                 if(e.keyCode == 9){
-                    info.hide_results();
+                	if(!shift){
+                		info.hide_results();
+                	}
+                	 
+                	return false;                  
                 }
 
             });
+        },
+        _highlight_scroll_li: function(li_pos) {
+        	var info = this;
+        	var li = info.data.supsel_select.find('li');
+        	
+            /*Disallow multi select in single select drop*/
+            if(!shift || !info.data.is_multiple){
+                li.removeClass('supsel_on_key');
+            }
+            var current_li = li.filter(':visible').filter(':eq('+li_pos+')');
+            if(!current_li.position()){
+                li_pos = 0;
+                current_li = li.filter(':visible').filter(':eq('+li_pos+')');
+            }
+            current_li.addClass('supsel_on_key');  
+
+	        maxHeight = parseInt(info.data.supsel_select.find('.supsel_results_list').css('maxHeight'), 10);
+            visible_top = info.data.supsel_select.find('.supsel_results_list').scrollTop();
+            visible_bottom = maxHeight + visible_top;
+            high_top = current_li.position().top + info.data.supsel_select.find('.supsel_results_list').scrollTop();
+            high_bottom = high_top + current_li.outerHeight();
+            high_top = high_top - 70;
+            
+            if (high_bottom >= visible_bottom) {
+                info.data.supsel_select.find('.supsel_results_list').scrollTop((high_bottom - maxHeight) > 0 ? high_bottom - maxHeight : 0);
+            } else if (high_top < visible_top) {
+                info.data.supsel_select.find('.supsel_results_list').scrollTop(high_top);
+            }
         },
         search: function(input_value) {
             var info = this;
