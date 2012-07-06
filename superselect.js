@@ -429,7 +429,7 @@
                                        
                     return false;
                 }
-                
+            
                 /* Key enter */
                 if(e.keyCode == 13){
                     if(info.data.is_multiple){
