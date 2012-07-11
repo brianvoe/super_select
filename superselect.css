@@ -149,3 +149,10 @@
 .supsel_div .supsel_info .supsel_show_except ul li.supsel_show  {
     display: block;
 }
+.supsel_div .supsel_info .supsel_results ul li.disabled {
+    color: #999999;
+}
+.supsel_div .supsel_info .supsel_results ul li.disabled:hover {
+    background-color: #FFFFFF;
+    color: #999999;
+}
