@@ -113,6 +113,9 @@
                         'val':this.value,
                         'txt':this.text
                     };
+                    if($(this).is(':disabled')){
+                        info.data.orig_values[index].dis = true;
+                    }
                 } else {
                     console.log('found optgroup');
                 }
