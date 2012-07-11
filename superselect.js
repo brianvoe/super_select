@@ -394,7 +394,15 @@
 
                 /* Add li's to results */
                 $.each(info.data.orig_values, function(index, value) {
-                    new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
+                	/* Check if its disabled */
+                	if(!value.dis){
+                		/* Not Disabled */
+                		new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
+                	}else{
+                		/* Disabled */
+                		new_results += '<li data-index="'+index+'" data-value="'+value.val+'" class="disabled">'+value.txt+'</li>';
+                	}
+                    
                 });
                 info.data.supsel_select.find('.supsel_results ul').html(new_results);
             } else {
@@ -403,7 +411,7 @@
                 /* Add li's to results from original and ajax */
                 if(info.options.ajax_orig_results) {
                     /* Add original values to results */
-                    $.each(info.data.orig_values, function(index, value) {
+                    $.each(info.data.orig_values, function(index, value) {                		
                         new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
                     });
                 }
@@ -417,7 +425,7 @@
         _add_click_to_li: function() {
             var info = this;
 
-            info.data.supsel_select.find('.supsel_results ul li').click(function() {
+            info.data.supsel_select.find('.supsel_results ul li:not(.disabled)').click(function() {
                 var index = $(this).attr('data-index');
                 var value = $(this).attr('data-value');
                 var text = $(this).html();
@@ -485,7 +493,7 @@
                 if (e.keyCode == 40) {                  
                     if(li_pos === '') {
                         li_pos = 0;
-                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible').length) {
+                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible:not(.disabled)').length) {
                         li_pos++;
                     }         
                     if(info.data.supsel_select.find('li').length > 0) {
@@ -501,7 +509,7 @@
                     }else if(li_pos > 0) {
                         li_pos--;            
                     }
-                    if(info.data.supsel_select.find('li').length > 0) {
+                    if(info.data.supsel_select.find('li').filter(':visible').length > 0) {
                         info._highlight_scroll_li(li_pos);
                     }
                                        
@@ -555,7 +563,7 @@
             if(!shift || !info.data.is_multiple){
                 li.removeClass('supsel_on_key');
             }
-            var current_li = li.filter(':visible').filter(':eq('+li_pos+')');
+            var current_li = li.filter(':visible:not(.disabled)').filter(':eq('+li_pos+')');
             if(!current_li.position()){
                 li_pos = 0;
                 current_li = li.filter(':visible').filter(':eq('+li_pos+')');
