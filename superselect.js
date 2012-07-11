@@ -107,11 +107,15 @@
             });
 
             /* Create orig_values array */
-            info.data.orig_select.find(' > option').each(function(index, value) {
-                info.data.orig_values[index] = {
-                    'val':this.value, 
-                    'txt':this.text
-                };
+            info.data.orig_select.children().each(function(index, value) {
+                if ($(this).prop('tagName') == 'OPTION') {
+                    info.data.orig_values[index] = {
+                        'val':this.value,
+                        'txt':this.text
+                    };
+                } else {
+                    console.log('found optgroup');
+                }
             });
 
             /* Add content to results */
