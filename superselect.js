@@ -107,19 +107,41 @@
             });
 
             /* Create orig_values array */
+            var o_num = 0; // option
+            var g_num = 0;
+            var go_num = 0;
             info.data.orig_select.children().each(function(index, value) {
                 if ($(this).prop('tagName') == 'OPTION') {
-                    info.data.orig_values[index] = {
+                    info.data.orig_values[index_num] = {
                         'val':this.value,
                         'txt':this.text
                     };
                     if($(this).is(':disabled')){
-                        info.data.orig_values[index].dis = true;
+                        info.data.orig_values[index_num].dis = true;
                     }
+                    index_num++;
                 } else {
-                    console.log('found optgroup');
+                    info.data.orig_values[index_num] = {
+                        'grp':true,
+                        'lbl':this.label
+                    };
+                    index_num++;
+                    $(this).children().each(function(){
+                        info.data.orig_values[index_num] = {
+                            'val':this.value,
+                            'txt':this.text
+                        };
+                        if($(this).is(':disabled')){
+                            info.data.orig_values[index_num].dis = true;
+                        }
+                        index_num++;
+                    });
                 }
             });
+            $.each(info.data.orig_values, function(index, value) {
+                console.log(index);
+            });
+
 
             /* Add content to results */
             info._add_li_to_results();

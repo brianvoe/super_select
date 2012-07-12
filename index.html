@@ -8,12 +8,13 @@
         <link href="superselect.css" rel="stylesheet" type="text/css" />
         <script>
             $(document).ready(function(){
-                $('.supsel').superselect();
-                $('.supsel_ajax').superselect({
-                    ajax_url: 'superselect.php',
-                    ajax_data: {'var_id': 37},
-                    ajax_search_name: 'superselect_search'
-                });
+                // $('.supsel').superselect();
+                $('#optselect').superselect();
+                // $('.supsel_ajax').superselect({
+                //     ajax_url: 'superselect.php',
+                //     ajax_data: {'var_id': 37},
+                //     ajax_search_name: 'superselect_search'
+                // });
                 $('.add_super').click(function(e){
                     $('.supsel').superselect();
                     $('.supsel_ajax').superselect({
@@ -51,7 +52,7 @@
             <a href="javascript:;" class="add_super">Add Super Select</a>
         </div>
         <div style="clear: both;"></div>
-        <div style="float: left; width: 500px;">
+        <div style="float: left; width: 500px; display: none;">
             <h3>Single Select</h3>
             <select class="supsel" data-placeholder="Select Animal..." id="animals" name="animals">
                 <option value=""></option>
@@ -307,7 +308,7 @@
                 <option value="Zimbabwe">Zimbabwe</option>
             </select>
         </div>
-        <div style="float: left;">
+        <div style="float: left; display: none;">
             <h3>Ajax Select</h3>
             <select class="supsel_ajax" name="ajax">
                 <option value="yellow">Yellow</option>
