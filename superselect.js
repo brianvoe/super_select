@@ -480,7 +480,7 @@
         _add_click_to_li: function() {
             var info = this;
 
-            info.data.supsel_select.find('.supsel_results ul li:not(.supsel_disabled)').click(function() {
+            info.data.supsel_select.find('.supsel_results ul li:not(.supsel_disabled,.supsel_label)').click(function() {
                 var index = $(this).attr('data-index');
                 var value = info.data.orig_values[index].val;
                 var text = info.data.orig_values[index].txt;

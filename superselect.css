@@ -128,11 +128,13 @@
     list-style: none;
     cursor: pointer;
 }
-.supsel_div .supsel_info .supsel_results ul ul {
-    padding: 0px 0px 0px 20px;
+.supsel_div .supsel_info .supsel_results ul ul li {
+    padding: 4px 4px 4px 20px;
 }
-.supsel_div .supsel_info .supsel_results ul li.supsel_label {
-    color: #000000;
+.supsel_div .supsel_info .supsel_results ul li.supsel_label,
+.supsel_div .supsel_info .supsel_results ul li.supsel_label:hover {
+    background-color: #ffffff;
+    color: #444444;
     font-weight: bold;
 }
 .supsel_div .supsel_info .supsel_results ul li.supsel_on {
