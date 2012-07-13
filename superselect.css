@@ -128,6 +128,13 @@
     list-style: none;
     cursor: pointer;
 }
+.supsel_div .supsel_info .supsel_results ul ul {
+    padding: 0px 0px 0px 10px;
+}
+.supsel_div .supsel_info .supsel_results ul li.supsel_label {
+    color: #000000;
+    font-weight: bold;
+}
 .supsel_div .supsel_info .supsel_results ul li.supsel_on {
     background-color: #3875D7;
     color: #ffffff;
@@ -149,10 +156,10 @@
 .supsel_div .supsel_info .supsel_show_except ul li.supsel_show  {
     display: block;
 }
-.supsel_div .supsel_info .supsel_results ul li.disabled {
+.supsel_div .supsel_info .supsel_results ul li.supsel_disabled {
     color: #999999;
 }
-.supsel_div .supsel_info .supsel_results ul li.disabled:hover {
+.supsel_div .supsel_info .supsel_results ul li.supsel_disabled:hover {
     background-color: #FFFFFF;
     color: #999999;
 }

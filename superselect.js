@@ -98,50 +98,51 @@
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
 
-            /* Add original values from to values array */
-            info.data.orig_select.find('option:selected').each(function(index, value) {
-                info.data.values[this.index] = {
-                    'val':this.value, 
-                    'txt':this.text
-                };
-            });
-
-            /* Create orig_values array */
+            /* Create orig_values array and add original values to values array */
             var o_num = 0; // option
-            var g_num = 0;
-            var go_num = 0;
+            var g_num = 0; // group
+            var go_num = 0; // group option
             info.data.orig_select.children().each(function(index, value) {
                 if ($(this).prop('tagName') == 'OPTION') {
-                    info.data.orig_values[index_num] = {
+                    if($(this).is(':selected')){
+                        info.data.values['o-'+o_num] = {
+                            'val':this.value,
+                            'txt':this.text
+                        };
+                    }
+                    info.data.orig_values['o-'+o_num] = {
                         'val':this.value,
                         'txt':this.text
                     };
                     if($(this).is(':disabled')){
-                        info.data.orig_values[index_num].dis = true;
+                        info.data.orig_values['o-'+o_num].dis = true;
                     }
-                    index_num++;
+                    o_num++;
                 } else {
-                    info.data.orig_values[index_num] = {
-                        'grp':true,
+                    info.data.orig_values['g-'+g_num] = {
                         'lbl':this.label
                     };
-                    index_num++;
+                    go_num = 0;
                     $(this).children().each(function(){
-                        info.data.orig_values[index_num] = {
+                        if($(this).is(':selected')){
+                            info.data.values['go-'+g_num+'-'+go_num] = {
+                                'val':this.value,
+                                'txt':this.text
+                            };
+                        }
+                        info.data.orig_values['go-'+g_num+'-'+go_num] = {
                             'val':this.value,
-                            'txt':this.text
+                            'txt':this.text,
+                            'grp':g_num
                         };
                         if($(this).is(':disabled')){
-                            info.data.orig_values[index_num].dis = true;
+                            info.data.orig_values['go-'+g_num+'-'+go_num].dis = true;
                         }
-                        index_num++;
+                        go_num++;
                     });
+                    g_num++;
                 }
             });
-            $.each(info.data.orig_values, function(index, value) {
-                console.log(index);
-            });
-
 
             /* Add content to results */
             info._add_li_to_results();
@@ -330,13 +331,22 @@
         /*************************/
         _set_select_values: function() {
             var info = this;
+            var location;
+
+            console.log(info.data.values);
 
             if(!info.data.is_ajax){
                 /* Non Ajax */
                 info.data.orig_select.find('option').removeAttr('selected');
                 $.each(info.data.values, function(index, value) {
+                    location = index.split('-');
                     if(info.data.is_multiple) {
-                        info.data.orig_select.find('option:eq('+index+')').attr('selected', true);
+                        // Group option
+                        if(location[0] == 'go'){
+                            info.data.orig_select.find('optgroup:eq('+location[1]+') option:eq('+location[2]+')').attr('selected', true);
+                        } else {
+                            info.data.orig_select.find('option:eq('+location[1]+')').attr('selected', true);
+                        }
                     } else {
                         info.data.orig_select.val(value.val);
                     }
@@ -371,7 +381,7 @@
                 /* Add items to select */
                 var multi_values = '';
                 $.each(info.data.values, function(index, value) {
-                    multi_values += '<div data-index="'+index+'" data-value="'+value.val+'" class="supsel_select_item" style="max-width: '+(info.options.select_width-15)+'px;overflow:hidden;">';
+                    multi_values += '<div data-index="'+index+'" class="supsel_select_item" style="max-width: '+(info.options.select_width-15)+'px;overflow:hidden;">';
                     multi_values += '   <div class="supsel_select_item_text">'+value.txt+'</div>';
                     multi_values += '   <div class="supsel_select_item_del"></div>';
                     multi_values += '</div>';
@@ -418,17 +428,40 @@
                 /* Non Ajax */
 
                 /* Add li's to results */
+                var grp_start = false;
+                var end_group = false;
+                console.log(info.data.orig_values);
                 $.each(info.data.orig_values, function(index, value) {
                 	/* Check if its disabled */
-                	if(!value.dis){
-                		/* Not Disabled */
-                		new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
-                	}else{
-                		/* Disabled */
-                		new_results += '<li data-index="'+index+'" data-value="'+value.val+'" class="disabled">'+value.txt+'</li>';
-                	}
-                    
+                    if(value.lbl) {
+                        /* Add group label  */
+                        new_results += '<li class="supsel_label">'+value.lbl+'</li>';
+                        new_results += '<ul>';
+                        grp_start = true;
+                        console.log('start');
+                    } else {
+                		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
+                        if(value.grp == undefined) {
+                            end_group = true;
+                            console.log('init end');
+                        }
+                    }
+                    if(grp_start && end_group) {
+                        /* Close off group */
+                        new_results += '</ul>';
+                        grp_start = false;
+                        end_group = false;
+                        console.log('end');
+                    }
                 });
+                if(grp_start && end_group) {
+                    /* Close off group */
+                    new_results += '</ul>';
+                    grp_start = false;
+                    end_group = false;
+                    console.log('end');
+                }
+                console.log(new_results);
                 info.data.supsel_select.find('.supsel_results ul').html(new_results);
             } else {
                 /* Ajax */
@@ -436,13 +469,13 @@
                 /* Add li's to results from original and ajax */
                 if(info.options.ajax_orig_results) {
                     /* Add original values to results */
-                    $.each(info.data.orig_values, function(index, value) {                		
-                        new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
+                    $.each(info.data.orig_values, function(index, value) {
+                        new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
                     });
                 }
                 /* Add search results to results */
                 $.each(info.data.ajax_values, function(index, value) {
-                    new_results += '<li data-index="'+index+'" data-value="'+value.val+'">'+value.txt+'</li>';
+                    new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
                 });
                 info.data.supsel_select.find('.supsel_results ul').html(new_results);
             }
@@ -450,10 +483,10 @@
         _add_click_to_li: function() {
             var info = this;
 
-            info.data.supsel_select.find('.supsel_results ul li:not(.disabled)').click(function() {
+            info.data.supsel_select.find('.supsel_results ul li:not(.supsel_disabled)').click(function() {
                 var index = $(this).attr('data-index');
-                var value = $(this).attr('data-value');
-                var text = $(this).html();
+                var value = info.data.orig_values[index].val;
+                var text = info.data.orig_values[index].txt;
 
                 if(!info.data.is_multiple) {
                     /* Empty array for single value */
@@ -509,6 +542,7 @@
         _add_key_events_to_results: function() {
             var info = this;
             var li_pos = '';
+            var cur_index;
             
             info.data.supsel_select.find('.supsel_search').keydown(function(e){
                 /* Shift Key also pressed*/
@@ -518,7 +552,7 @@
                 if (e.keyCode == 40) {                  
                     if(li_pos === '') {
                         li_pos = 0;
-                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible:not(.disabled)').length) {
+                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible:not(.supsel_disabled)').length) {
                         li_pos++;
                     }         
                     if(info.data.supsel_select.find('li').length > 0) {
@@ -546,17 +580,19 @@
                     if(info.data.is_multiple){
                         /* Push multiple values */
                         info.data.supsel_select.find('.supsel_on_key').each(function(){
-                            info.data.values[$(this).attr('data-index')] = {
-                                'val':$(this).attr('data-value'),
-                                'txt':$(this).html()
+                            cur_index = $(this).attr('data-index');
+                            info.data.values[cur_index] = {
+                                'val':info.data.orig_select[cur_index].val,
+                                'txt':info.data.orig_select[cur_index].txt
                             };
                         });
                     } else {
                         /* Set single value */
                         info.data.values = {};
-                        info.data.values[info.data.supsel_select.find('.supsel_on_key').attr('data-index')] = {
-                            'val':info.data.supsel_select.find('.supsel_on_key').attr('data-value'),
-                            'txt':info.data.supsel_select.find('.supsel_on_key').html()
+                        cur_index = info.data.supsel_select.find('.supsel_on_key').attr('data-index');
+                        info.data.values[cur_index] = {
+                            'val':info.data.orig_select[cur_index].val,
+                            'txt':info.data.orig_select[cur_index].txt
                         };
                     }
 
@@ -588,7 +624,7 @@
             if(!shift || !info.data.is_multiple){
                 li.removeClass('supsel_on_key');
             }
-            var current_li = li.filter(':visible:not(.disabled)').filter(':eq('+li_pos+')');
+            var current_li = li.filter(':visible:not(.supsel_disabled)').filter(':eq('+li_pos+')');
             if(!current_li.position()){
                 li_pos = 0;
                 current_li = li.filter(':visible').filter(':eq('+li_pos+')');

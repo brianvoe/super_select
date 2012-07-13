@@ -10,6 +10,7 @@
             $(document).ready(function(){
                 // $('.supsel').superselect();
                 $('#optselect').superselect();
+                //$('#optselect_multi').superselect();
                 // $('.supsel_ajax').superselect({
                 //     ajax_url: 'superselect.php',
                 //     ajax_data: {'var_id': 37},
@@ -320,13 +321,55 @@
             </select>
         </div>
         <div style="clear: both;"></div>
-        <div>
+        <div style="float: left; width: 500px;">
             <h3>Optigroup</h3>
             <select id="optselect" class="supsel">
-                <option value="ford">Ford</option>
+                <option selected="selected" value="bat mobile">Bat Mobile</option>
+                <option selected value="slug bug">Slug Bug</option>
+                <option value="weiner mobile">Weiner Mobile</option>
                 <optgroup label="Swedish Cars">
                     <option value="volvo">Volvo</option>
                     <option value="saab">Saab</option>
+                </optgroup>
+                <optgroup label="American Cars">
+                    <option value="ford">Ford</option>
+                    <option value="hummer">Hummer</option>
+                    <option value="chevy">Chevy</option>
+                    <option value="mazda">Mazda</option>
+                    <option selected value="jeep">Jeep</option>
+                    <option value="buick">Buick</option>
+                    <option value="cadillac">Cadillac</option>
+                    <option selected="selected" value="dodge">Dodge</option>
+                    <option value="ram">Ram</option>
+                    <option value="saturn">Saturn</option>
+                </optgroup>
+                <optgroup label="German Cars">
+                    <option value="mercedes">Mercedes</option>
+                    <option value="audi">Audi</option>
+                </optgroup>
+            </select>
+        </div>
+        <div style="float: left; width: 500px;">
+            <h3>Optigroup Multi</h3>
+            <select multiple style="width: 150px;height: 300px;" id="optselect_multi" class="supsel">
+                <option selected="selected" value="bat mobile">Bat Mobile</option>
+                <option selected value="slug bug">Slug Bug</option>
+                <option value="weiner mobile">Weiner Mobile</option>
+                <optgroup label="Swedish Cars">
+                    <option value="volvo">Volvo</option>
+                    <option value="saab">Saab</option>
+                </optgroup>
+                <optgroup label="American Cars">
+                    <option value="ford">Ford</option>
+                    <option value="hummer">Hummer</option>
+                    <option value="chevy">Chevy</option>
+                    <option value="mazda">Mazda</option>
+                    <option selected value="jeep">Jeep</option>
+                    <option value="buick">Buick</option>
+                    <option value="cadillac">Cadillac</option>
+                    <option selected="selected" value="dodge">Dodge</option>
+                    <option value="ram">Ram</option>
+                    <option value="saturn">Saturn</option>
                 </optgroup>
                 <optgroup label="German Cars">
                     <option value="mercedes">Mercedes</option>
