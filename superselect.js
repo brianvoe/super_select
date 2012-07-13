@@ -120,6 +120,7 @@
                     o_num++;
                 } else {
                     info.data.orig_values['g-'+g_num] = {
+                        'gid':g_num,
                         'lbl':this.label
                     };
                     go_num = 0;
@@ -333,8 +334,6 @@
             var info = this;
             var location;
 
-            console.log(info.data.values);
-
             if(!info.data.is_ajax){
                 /* Non Ajax */
                 info.data.orig_select.find('option').removeAttr('selected');
@@ -428,40 +427,38 @@
                 /* Non Ajax */
 
                 /* Add li's to results */
+                var cur_gid = false;
                 var grp_start = false;
-                var end_group = false;
-                console.log(info.data.orig_values);
                 $.each(info.data.orig_values, function(index, value) {
                 	/* Check if its disabled */
                     if(value.lbl) {
+                        if(value.gid != cur_gid && grp_start) {
+                            /* Close off group if this value does not match */
+                            new_results += '</ul>';
+                            cur_gid = false;
+                        }
                         /* Add group label  */
                         new_results += '<li class="supsel_label">'+value.lbl+'</li>';
                         new_results += '<ul>';
                         grp_start = true;
-                        console.log('start');
+                        cur_gid = value.gid;
                     } else {
-                		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
-                        if(value.grp == undefined) {
-                            end_group = true;
-                            console.log('init end');
+                        /* Add option */
+                        if(value.grp != cur_gid && grp_start) {
+                            /* Close off group if this value does not match */
+                            new_results += '</ul>';
+                            cur_gid = false;
+                            grp_start = false;
                         }
-                    }
-                    if(grp_start && end_group) {
-                        /* Close off group */
-                        new_results += '</ul>';
-                        grp_start = false;
-                        end_group = false;
-                        console.log('end');
+                		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
                     }
                 });
-                if(grp_start && end_group) {
+                if(grp_start) {
                     /* Close off group */
                     new_results += '</ul>';
                     grp_start = false;
-                    end_group = false;
-                    console.log('end');
+                    grp_end = false;
                 }
-                console.log(new_results);
                 info.data.supsel_select.find('.supsel_results ul').html(new_results);
             } else {
                 /* Ajax */
