@@ -300,12 +300,14 @@
                     /* Take input_value and search array */
                     $.each(this.data.orig_values, function(index, value) {
                         var search = new RegExp(input_value, 'gi');
-                        if(value.txt.match(search)) {
-                            info.data.search_values[index] = {
-                                'val':value.val, 
-                                'txt':value.txt
-                            };
-                        } 
+                        if(value.txt){
+                        	 if(value.txt.match(search)) {
+	                            info.data.search_values[index] = {
+	                                'val':value.val, 
+	                                'txt':value.txt
+	                            };
+	                        } 
+                        }
                     });
 
                     info._search_hide_display_values();
@@ -549,7 +551,7 @@
                 if (e.keyCode == 40) {                  
                     if(li_pos === '') {
                         li_pos = 0;
-                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible:not(.supsel_disabled)').length) {
+                    } else if((li_pos+1) < info.data.supsel_select.find('li').filter(':visible:not(.supsel_disabled, .supsel_label)').length) {
                         li_pos++;
                     }         
                     if(info.data.supsel_select.find('li').length > 0) {
@@ -579,8 +581,8 @@
                         info.data.supsel_select.find('.supsel_on_key').each(function(){
                             cur_index = $(this).attr('data-index');
                             info.data.values[cur_index] = {
-                                'val':info.data.orig_select[cur_index].val,
-                                'txt':info.data.orig_select[cur_index].txt
+                                'val':info.data.orig_values[cur_index].val,
+                                'txt':info.data.orig_values[cur_index].txt
                             };
                         });
                     } else {
@@ -588,8 +590,8 @@
                         info.data.values = {};
                         cur_index = info.data.supsel_select.find('.supsel_on_key').attr('data-index');
                         info.data.values[cur_index] = {
-                            'val':info.data.orig_select[cur_index].val,
-                            'txt':info.data.orig_select[cur_index].txt
+                            'val':info.data.orig_values[cur_index].val,
+                            'txt':info.data.orig_values[cur_index].txt
                         };
                     }
 
@@ -621,7 +623,7 @@
             if(!shift || !info.data.is_multiple){
                 li.removeClass('supsel_on_key');
             }
-            var current_li = li.filter(':visible:not(.supsel_disabled)').filter(':eq('+li_pos+')');
+            var current_li = li.filter(':visible:not(.supsel_disabled, .supsel_label)').filter(':eq('+li_pos+')');
             if(!current_li.position()){
                 li_pos = 0;
                 current_li = li.filter(':visible').filter(':eq('+li_pos+')');
@@ -685,7 +687,7 @@
             info.data.supsel_select.find('.search_results li').removeClass('supsel_show');
         }
     };
-
+    
     $.fn.superselect = function(options) {
         var args = Array.prototype.slice.call(arguments, 1);
         return this.each(function() {
@@ -698,9 +700,9 @@
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
-                        var super_select_obj = Object.create(super_select_funcs);
-                        super_select_obj.create(options, this);
-                        $.data(this, 'superselect', super_select_obj);
+                    		var super_select_obj = Object.create(super_select_funcs);
+	                        super_select_obj.create(options, this);
+	                        $.data(this, 'superselect', super_select_obj);
                     }   
                 } else {
                     $.error('Method ' +  options + ' does not exist in Super Select');
@@ -710,5 +712,22 @@
             }
         });
     };
+    
 
 })(jQuery);
+
+// IE 8, 7 Compatibility 
+if ( typeof Object.create !== 'function' ) {
+	Object.create = function( obj ) {
+		function F() {};
+		F.prototype = obj;
+		return new F();
+	};
+}
+if (!Object.keys) Object.keys = function(o) {
+  if (o !== Object(o))
+    throw new TypeError('Object.keys called on a non-object');
+  var k=[],p;
+  for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+  	return k;
+}
