@@ -462,8 +462,7 @@
                     }
                     /* If highlights */
                     if(info.options.search_highlight && value.srch){
-                        var re = new RegExp("(" + info._special_char_escape(value.srch) + ")", 'gi');
-                        value.txt = value.txt.replace(re, "<span>$1</span>");                       
+                        value.txt = info._highlight_str(value.txt, value.srch);
                     }
             		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
                 }
@@ -652,6 +651,12 @@
             /* Remove class supsel_show_except supsel_show supsel_on */
             info.data.supsel_select.find('.supsel_results').removeClass('supsel_show_except');
             info.data.supsel_select.find('.supsel_results li').removeClass('supsel_show supsel_on');
+
+            /* If highlights remove highlight */
+            if(info.options.search_highlight){
+                /* Unwrap spans */
+                info.data.supsel_select.find('.supsel_results li span').contents().unwrap();
+            }
         },
         _search_hide_display_values: function() {
             var info = this;
@@ -666,8 +671,7 @@
             $.each(info.data.search_values, function(index, value, search) {
                 info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show').html(function(){
                 	if(info.options.search_highlight && value.srch){
-	                	var re = new RegExp("(" + info._special_char_escape(value.srch) + ")", 'gi');
-	                	return value.txt.replace(re, "<span>$1</span>");                		
+                        return info._highlight_str(value.txt, value.srch);
                 	}
                 	return value.txt;
                 });
@@ -693,6 +697,11 @@
         /* Reusable misc functions */
         _special_char_escape: function(str) {
             return str.replace(/[.*+?|()\[\]{}\\$^]/g, "\\$&");
+        },
+        _highlight_str: function(str, val) {
+            var info = this;
+            var re = new RegExp("(" + info._special_char_escape(val) + ")", 'gi');
+            return str.replace(re, "<span>$1</span>");
         }
     };
     
