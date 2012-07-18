@@ -158,6 +158,9 @@
 .supsel_div .supsel_info .supsel_show_except ul li.supsel_show  {
     display: block;
 }
+.supsel_div .supsel_info .supsel_results_list ul li span {
+    background-color: #FFF68F;
+}
 .supsel_div .supsel_info .supsel_results ul li.supsel_disabled {
     color: #999999;
 }

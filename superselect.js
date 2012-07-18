@@ -13,6 +13,7 @@
         blank_option: 'Choose option...',
         select_width: 300,
         info_width: 350,
+        search_highlight: false,
         /* Ajax variables */
         ajax_url: '',
         ajax_data: {},
@@ -288,7 +289,8 @@
                                 /* Randomize index on top of name so there are no duplicates */
                                 info.data.ajax_values[index+(Math.ceil(Math.random() * 1000))] = {
                                     'val':index, 
-                                    'txt':value
+                                    'txt':value,
+                                    'srch': input_value
                                 };
                             });
 
@@ -304,7 +306,8 @@
                         	 if(value.txt.match(search)) {
 	                            info.data.search_values[index] = {
 	                                'val':value.val, 
-	                                'txt':value.txt
+	                                'txt':value.txt,
+	                                'srch': input_value
 	                            };
 	                        } 
                         }
@@ -474,6 +477,10 @@
                 }
                 /* Add search results to results */
                 $.each(info.data.ajax_values, function(index, value) {
+                	if(info.options.search_highlight){
+	                	var re = new RegExp("(" + RegExp.escape(value.srch) + ")", 'gi');
+	                	value.txt = value.txt.replace(re, "<span>$1</span>");                		
+                	}
                     new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
                 });
                 info.data.supsel_select.find('.supsel_results ul').html(new_results);
@@ -666,8 +673,14 @@
             info.data.supsel_select.find('.supsel_results').addClass('supsel_show_except');
 
             /* Add class supsel_show */
-            $.each(info.data.search_values, function(index, value) {
-                info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show');
+            $.each(info.data.search_values, function(index, value, search) {
+                info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show').html(function(){
+                	if(info.options.search_highlight){
+	                	var re = new RegExp("(" + RegExp.escape(value.srch) + ")", 'gi');
+	                	return value.txt.replace(re, "<span>$1</span>");                		
+                	}
+                	return value.txt;
+                });
             });
 
             /* If no results show supsel_noresults */
@@ -731,3 +744,10 @@ if (!Object.keys) Object.keys = function(o) {
   for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
   	return k;
 }
+
+//Utility special char
+RegExp.escape = function(str){
+  var specials = /[.*+?|()\[\]{}\\$^]/g;
+  return str.replace(specials, "\\$&");
+}
+
