@@ -13,7 +13,7 @@
         blank_option: 'Choose option...',
         select_width: 300,
         info_width: 350,
-        search_highlight: false,
+        search_highlight: true,
         /* Ajax variables */
         ajax_url: '',
         ajax_data: {},
@@ -35,7 +35,6 @@
         /* Values */
         orig_values: {},
         search_values: {},
-        ajax_values: {},
         values: {}
     };
 
@@ -53,7 +52,6 @@
             /* Reset array values */
             info.data.orig_values = {};
             info.data.search_values = {};
-            info.data.ajax_values = {};
             info.data.values = {};
             
             /* Get or set id */
@@ -94,15 +92,15 @@
             info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
-            //info.data.orig_select.hide();
+            info.data.orig_select.hide();
 
             /* Create new dropdown */
             info.data.supsel_select.insertAfter(info.data.orig_select);
 
             /* Create orig_values array and add original values to values array */
-            var o_num = 0; // option
-            var g_num = 0; // group
-            var go_num = 0; // group option
+            var o_num = 0; /* option */
+            var g_num = 0; /* group */
+            var go_num = 0; /* group option */
             info.data.orig_select.children().each(function(index, value) {
                 if ($(this).prop('tagName') == 'OPTION') {
                     if($(this).is(':selected')){
@@ -284,11 +282,15 @@
                         data: $.extend({}, info.options.ajax_data, search_name),
                         success: function(data){
                             /* Run through json data and add it to supsel data */
-                            info.data.ajax_values = {};
+                            info.data.orig_values = {};
                             $.each(data, function(index, value) {
-                                /* Randomize index on top of name so there are no duplicates */
-                                info.data.ajax_values[index+(Math.ceil(Math.random() * 1000))] = {
-                                    'val':index, 
+                                /* Clean up index to  */
+                                var new_index = index;
+                                new_index = new_index.replace(/[^a-zA-Z0-9\s]/g, ''); /* Replace everything beside numbers and letters */
+                                new_index = new_index.replace(/ /g, '_'); /* Replace space with underscore */
+                                new_index = new_index+(Math.ceil(Math.random() * 1000)); /* Add random number to end to alleviate multiple index */
+                                info.data.orig_values[new_index] = {
+                                    'val':index,
                                     'txt':value,
                                     'srch': input_value
                                 };
@@ -345,7 +347,7 @@
                 $.each(info.data.values, function(index, value) {
                     location = index.split('-');
                     if(info.data.is_multiple) {
-                        // Group option
+                        /* Group option */
                         if(location[0] == 'go'){
                             info.data.orig_select.find('optgroup:eq('+location[1]+') option:eq('+location[2]+')').attr('selected', true);
                         } else {
@@ -428,63 +430,51 @@
             var info = this;
             var new_results = '';            
 
-            if(!info.data.is_ajax){
-                /* Non Ajax */
-
-                /* Add li's to results */
-                var cur_gid = false;
-                var grp_start = false;
+            /* Add li's to results */
+            var cur_gid = false;
+            var grp_start = false;
+            /* Add original values to results */
+            if(info.options.ajax_orig_results) {
                 $.each(info.data.orig_values, function(index, value) {
-                	/* Check if its disabled */
-                    if(value.lbl) {
-                        if(value.gid != cur_gid && grp_start) {
-                            /* Close off group if this value does not match */
-                            new_results += '</ul>';
-                            cur_gid = false;
-                        }
-                        /* Add group label  */
-                        new_results += '<li class="supsel_label">'+value.lbl+'</li>';
-                        new_results += '<ul>';
-                        grp_start = true;
-                        cur_gid = value.gid;
-                    } else {
-                        /* Add option */
-                        if(value.grp != cur_gid && grp_start) {
-                            /* Close off group if this value does not match */
-                            new_results += '</ul>';
-                            cur_gid = false;
-                            grp_start = false;
-                        }
-                		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
-                    }
-                });
-                if(grp_start) {
-                    /* Close off group */
-                    new_results += '</ul>';
-                    grp_start = false;
-                    grp_end = false;
-                }
-                info.data.supsel_select.find('.supsel_results ul').html(new_results);
-            } else {
-                /* Ajax */
-
-                /* Add li's to results from original and ajax */
-                if(info.options.ajax_orig_results) {
-                    /* Add original values to results */
-                    $.each(info.data.orig_values, function(index, value) {
-                        new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
-                    });
-                }
-                /* Add search results to results */
-                $.each(info.data.ajax_values, function(index, value) {
-                	if(info.options.search_highlight){
-	                	var re = new RegExp("(" + RegExp.escape(value.srch) + ")", 'gi');
-	                	value.txt = value.txt.replace(re, "<span>$1</span>");                		
-                	}
                     new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
                 });
-                info.data.supsel_select.find('.supsel_results ul').html(new_results);
             }
+            $.each(info.data.orig_values, function(index, value) {
+            	/* Check if its disabled */
+                if(value.lbl) {
+                    if(value.gid != cur_gid && grp_start) {
+                        /* Close off group if this value does not match */
+                        new_results += '</ul>';
+                        cur_gid = false;
+                    }
+                    /* Add group label  */
+                    new_results += '<li class="supsel_label">'+value.lbl+'</li>';
+                    new_results += '<ul>';
+                    grp_start = true;
+                    cur_gid = value.gid;
+                } else {
+                    /* Add option */
+                    if(value.grp != cur_gid && grp_start) {
+                        /* Close off group if this value does not match */
+                        new_results += '</ul>';
+                        cur_gid = false;
+                        grp_start = false;
+                    }
+                    /* If highlights */
+                    if(info.options.search_highlight && value.srch){
+                        var re = new RegExp("(" + info._special_char_escape(value.srch) + ")", 'gi');
+                        value.txt = value.txt.replace(re, "<span>$1</span>");                       
+                    }
+            		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
+                }
+            });
+            if(grp_start) {
+                /* Close off group */
+                new_results += '</ul>';
+                grp_start = false;
+                grp_end = false;
+            }
+            info.data.supsel_select.find('.supsel_results ul').html(new_results);
         },
         _add_click_to_li: function() {
             var info = this;
@@ -675,8 +665,8 @@
             /* Add class supsel_show */
             $.each(info.data.search_values, function(index, value, search) {
                 info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show').html(function(){
-                	if(info.options.search_highlight){
-	                	var re = new RegExp("(" + RegExp.escape(value.srch) + ")", 'gi');
+                	if(info.options.search_highlight && value.srch){
+	                	var re = new RegExp("(" + info._special_char_escape(value.srch) + ")", 'gi');
 	                	return value.txt.replace(re, "<span>$1</span>");                		
                 	}
                 	return value.txt;
@@ -698,6 +688,11 @@
 
             /* Remove class supsel_show */
             info.data.supsel_select.find('.search_results li').removeClass('supsel_show');
+        },
+
+        /* Reusable misc functions */
+        _special_char_escape: function(str) {
+            return str.replace(/[.*+?|()\[\]{}\\$^]/g, "\\$&");
         }
     };
     
@@ -729,7 +724,7 @@
 
 })(jQuery);
 
-// IE 8, 7 Compatibility 
+/* IE 8, 7 Compatibility */
 if ( typeof Object.create !== 'function' ) {
 	Object.create = function( obj ) {
 		function F() {};
@@ -744,10 +739,3 @@ if (!Object.keys) Object.keys = function(o) {
   for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
   	return k;
 }
-
-//Utility special char
-RegExp.escape = function(str){
-  var specials = /[.*+?|()\[\]{}\\$^]/g;
-  return str.replace(specials, "\\$&");
-}
-
