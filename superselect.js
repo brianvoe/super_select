@@ -11,8 +11,8 @@
     /* Select Options */
     var select_options = {
         blank_option: 'Choose option...',
-        select_width: 300,
-        info_width: 350,
+        select_width: false,
+        info_width: false,
         search_highlight: true,
         /* Ajax variables */
         ajax_url: '',
@@ -65,6 +65,13 @@
             info.data.is_multiple = ($('#'+info.data.orig_id).attr('multiple') ? true: false);
             info.data.supsel_id = info.data.orig_id+'_supsel';
 
+            /* Set original input into variable */
+            info.data.orig_select = $('#'+info.data.orig_id);
+
+            /* Set style variables */
+            info.options.select_width = (info.options.select_width ? info.options.select_width: info.data.orig_select.width());
+            info.options.info_width = (info.options.info_width ? info.options.info_width: info.options.select_width+50);
+
             /* Create html for supsel */
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
@@ -82,8 +89,7 @@
             new_select += '   </div>';
             new_select += '</div>';
 
-            /* Set inputs into variables */
-            info.data.orig_select = $('#'+info.data.orig_id);
+            /* Set super select input into variable */
             info.data.supsel_select = $(new_select);
 
             /* Set items from original select */
