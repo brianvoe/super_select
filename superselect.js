@@ -195,7 +195,7 @@
 
             /* Add key event to search input */
             info.data.supsel_select.find('.supsel_search input').keyup(function(e){
-                if(e.keyCode != 38 && e.keyCode != 40){ /* Exclude up and down arrows */
+                if(e.keyCode != 38 && e.keyCode != 40 && e.keyCode != 9 && e.keyCode != 16){ /* Exclude up and down arrows, tab, shift */
                     info.search(this.value);
                 }
             });
