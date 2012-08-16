@@ -18,7 +18,9 @@
         ajax_url: '',
         ajax_data: {},
         ajax_search_name: 'superselect_search',
-        ajax_orig_results: false /* Add original values from select to search results */
+        ajax_orig_results: false, /* Add original values from select to search results */
+        /* Functions */
+        on_update: null
     };
 
     var select_data = {
@@ -376,6 +378,9 @@
                     }
                 });
             }
+
+            /* Run on update function */
+            info.options.on_update.apply();
         },
         _set_display_select: function() {
             var info = this;
