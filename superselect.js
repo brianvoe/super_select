@@ -330,7 +330,7 @@
                         $.each(this.data.orig_values, function(index, value) {
                             var search = new RegExp(input_value, 'gi');
                             if(value.txt){
-                                 if(value.txt.match(search)) {
+                                if(value.txt.match(search)) {
                                     info.data.search_values[index] = {
                                         'val':value.val, 
                                         'txt':value.txt,
@@ -398,9 +398,9 @@
             }
 
             /* Run on update function */
-           if(info.options.on_update){
-           		info.options.on_update.apply();
-           }     
+            if(info.options.on_update){
+                info.options.on_update.apply();
+            }     
         },
         _set_display_select: function() {
             var info = this;
@@ -755,9 +755,9 @@
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
-                            var super_select_obj = Object.create(super_select_funcs);
-                            super_select_obj.create(options, this);
-                            $.data(this, 'superselect', super_select_obj);
+                        var super_select_obj = Object.create(super_select_funcs);
+                        super_select_obj.create(options, this);
+                        $.data(this, 'superselect', super_select_obj);
                     }   
                 } else {
                     $.error('Method ' +  options + ' does not exist in Super Select');
@@ -780,9 +780,9 @@ if ( typeof Object.create !== 'function' ) {
     };
 }
 if (!Object.keys) Object.keys = function(o) {
-  if (o !== Object(o))
-    throw new TypeError('Object.keys called on a non-object');
-  var k=[],p;
-  for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
+    if (o !== Object(o))
+        throw new TypeError('Object.keys called on a non-object');
+    var k=[],p;
+    for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
     return k;
 }
