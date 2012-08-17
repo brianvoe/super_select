@@ -398,7 +398,9 @@
             }
 
             /* Run on update function */
-            info.options.on_update.apply();
+           if(info.options.on_update){
+           		info.options.on_update.apply();
+           }     
         },
         _set_display_select: function() {
             var info = this;
