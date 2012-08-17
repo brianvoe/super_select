@@ -10,12 +10,11 @@
 
     /* Select Options */
     var select_options = {
-        blank_option: 'Choose option...',
-        set_placeholder: false,
-        select_width: false,
-        info_width: false,
-        search_highlight: true,
-        search_char_limit: 1,
+        blank_option: 'Choose option...', /* If first option in select is val = '' && text = '' set blank option */
+        select_width: false, /* false or width of superselect - superselect will also inherit styles */
+        info_width: false, /* false or width of superselect results - superselect will also inherit styles and add 50 */
+        search_highlight: true, /* true or false - Highlights search results */
+        search_char_limit: 1, /* int - set search  */
         /* Ajax variables */
         ajax_url: '',
         ajax_data: {},
@@ -99,11 +98,7 @@
 
             /* Set items from original select */
             info.data.orig_select.attr('tabindex', '-1');
-            if(info.options.set_placeholder){
-                info.options.blank_option = info.options.set_placeholder;
-            } else {
-                info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
-            }
+            info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
             info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
@@ -158,6 +153,25 @@
                     g_num++;
                 }
             });
+
+            /* Set placeholder if no values set or value does not have val or text - Single dropdown only */
+            if(!info.data.is_multiple){
+                var remove_blank = false;
+                var remove_blank_index = '';
+                $.each(info.data.values, function(index, value) {
+                    if(value.val == '' || value.txt == ''){
+                        remove_blank = true;
+                        remove_blank_index = index;
+                    }
+                });
+                if(remove_blank){
+                    /* Remove from values and original values */
+                    info.data.values = {};
+                    delete info.data.orig_values[remove_blank_index];
+                    /* Remove from original select */
+                    info.data.orig_select.find("option[value='']").remove();
+                }
+            }
 
             /* Add content to results */
             info._add_li_to_results();
@@ -603,7 +617,7 @@
             
                 /* Key enter */
                 if(e.keyCode == 13){
-                    e.preventDefault(); // Prevent form submit
+                    e.preventDefault(); /* Prevent form submit */
                     if(!info.data.is_multiple){
                         info.data.values = {};
                     }
