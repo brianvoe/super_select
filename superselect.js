@@ -11,6 +11,7 @@
     /* Select Options */
     var select_options = {
         blank_option: 'Choose option...',
+        set_placeholder: false,
         select_width: false,
         info_width: false,
         search_highlight: true,
@@ -97,7 +98,11 @@
 
             /* Set items from original select */
             info.data.orig_select.attr('tabindex', '-1');
-            info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
+            if(info.options.set_placeholder){
+                info.options.blank_option = info.options.set_placeholder;
+            } else {
+                info.options.blank_option = (info.data.orig_select.data('placeholder') ? info.data.orig_select.data('placeholder'): info.options.blank_option);
+            }
             info.data.is_ajax = (info.options.ajax_url != '' ? true: false);
 
             /* Hide original select dropdown */
