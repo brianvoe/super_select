@@ -14,6 +14,7 @@
         select_width: false,
         info_width: false,
         search_highlight: true,
+        search_char_limit: 1,
         /* Ajax variables */
         ajax_url: '',
         ajax_data: {},
@@ -279,51 +280,53 @@
             info.data.search_values = {};
 
             if(input_value != '') {
-                if(info.data.is_ajax) {
-                    /* Ajax Search requested location */
-                    var search_name = {};
-                    search_name[info.options.ajax_search_name] = input_value;
-                    $.ajax({
-                        url: info.options.ajax_url,
-                        type: 'POST',
-                        dataType: 'json',
-                        data: $.extend({}, info.options.ajax_data, search_name),
-                        success: function(data){
-                            /* Run through json data and add it to supsel data */
-                            info.data.orig_values = {};
-                            $.each(data, function(index, value) {
-                                /* Clean up index to  */
-                                var new_index = index;
-                                new_index = new_index.replace(/[^a-zA-Z0-9\s]/g, ''); /* Replace everything beside numbers and letters */
-                                new_index = new_index.replace(/ /g, '_'); /* Replace space with underscore */
-                                new_index = new_index+(Math.ceil(Math.random() * 1000)); /* Add random number to end to alleviate multiple index */
-                                info.data.orig_values[new_index] = {
-                                    'val':index,
-                                    'txt':value,
-                                    'srch': input_value
-                                };
-                            });
+                if(input_value.length >= info.options.search_char_limit) {
+                    if(info.data.is_ajax) {
+                        /* Ajax Search requested location */
+                        var search_name = {};
+                        search_name[info.options.ajax_search_name] = input_value;
+                        $.ajax({
+                            url: info.options.ajax_url,
+                            type: 'POST',
+                            dataType: 'json',
+                            data: $.extend({}, info.options.ajax_data, search_name),
+                            success: function(data){
+                                /* Run through json data and add it to supsel data */
+                                info.data.orig_values = {};
+                                $.each(data, function(index, value) {
+                                    /* Clean up index to  */
+                                    var new_index = index;
+                                    new_index = new_index.replace(/[^a-zA-Z0-9\s]/g, ''); /* Replace everything beside numbers and letters */
+                                    new_index = new_index.replace(/ /g, '_'); /* Replace space with underscore */
+                                    new_index = new_index+(Math.ceil(Math.random() * 1000)); /* Add random number to end to alleviate multiple index */
+                                    info.data.orig_values[new_index] = {
+                                        'val':index,
+                                        'txt':value,
+                                        'srch': input_value
+                                    };
+                                });
 
-                            info._add_li_to_results();
-                            info._add_click_to_li();
-                        }
-                    });
-                } else {
-                    /* Take input_value and search array */
-                    $.each(this.data.orig_values, function(index, value) {
-                        var search = new RegExp(input_value, 'gi');
-                        if(value.txt){
-                        	 if(value.txt.match(search)) {
-	                            info.data.search_values[index] = {
-	                                'val':value.val, 
-	                                'txt':value.txt,
-	                                'srch': input_value
-	                            };
-	                        } 
-                        }
-                    });
+                                info._add_li_to_results();
+                                info._add_click_to_li();
+                            }
+                        });
+                    } else {
+                        /* Take input_value and search array */
+                        $.each(this.data.orig_values, function(index, value) {
+                            var search = new RegExp(input_value, 'gi');
+                            if(value.txt){
+                            	 if(value.txt.match(search)) {
+    	                            info.data.search_values[index] = {
+    	                                'val':value.val, 
+    	                                'txt':value.txt,
+    	                                'srch': input_value
+    	                            };
+    	                        } 
+                            }
+                        });
 
-                    info._search_hide_display_values();
+                        info._search_hide_display_values();
+                    }
                 }
             } else {
                 info._search_clear();
