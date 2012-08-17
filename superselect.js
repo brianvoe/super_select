@@ -601,31 +601,20 @@
             
                 /* Key enter */
                 if(e.keyCode == 13){
-                    if(info.data.is_multiple){
-                        /* Push multiple values */
-                        info.data.supsel_select.find('.supsel_on_key').each(function(){
-                            cur_index = $(this).attr('data-index');
-                            if(cur_index){
-                                info.data.values[cur_index] = {
-                                    'val':info.data.orig_values[cur_index].val,
-                                    'txt':info.data.orig_values[cur_index].txt
-                                };
-                            }
-                        });
-                    } else {
-                        /* Set single value */
+                    e.preventDefault(); // Prevent form submit
+                    if(!info.data.is_multiple){
                         info.data.values = {};
-                        cur_index = info.data.supsel_select.find('.supsel_on_key').attr('data-index');
+                    }
+                    info.data.supsel_select.find('.supsel_on_key').each(function(){
+                        cur_index = $(this).attr('data-index');
                         if(cur_index){
                             info.data.values[cur_index] = {
                                 'val':info.data.orig_values[cur_index].val,
                                 'txt':info.data.orig_values[cur_index].txt
                             };
                         }
-
-                    }
+                    });
                     if(info.data.supsel_select.find('li:visible').length == 1){
-                        info.data.values = {};
                         cur_index = info.data.supsel_select.find('li:visible').attr('data-index');
                         if(cur_index){
                             info.data.values[cur_index] = {
