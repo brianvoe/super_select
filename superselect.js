@@ -88,6 +88,7 @@
             new_select += '       <div class="supsel_search"><input placeholder="Search..." type="text" value="" /></div>';
             new_select += '       <div class="supsel_results">';
             new_select += '           <div class="supsel_noresults" tabindex="-1">No Results Found</div>';
+            new_select += '           <div class="supsel_searching" tabindex="-1">Searching...</div>';
             new_select += '           <div class="supsel_results_list" tabindex="-1"><ul></ul></div>';
             new_select += '       </div>';
             new_select += '   </div>';
@@ -180,7 +181,7 @@
             info.data.supsel_select.find('.supsel_select').mouseup(function(){
                 info.is_click = false;
             });
-			
+            
             /* Add tab focus to supsel_select */
             info.data.supsel_select.find('.supsel_select').focus(function(){
                 if(!info.is_click){
@@ -287,6 +288,8 @@
             if(input_value != '') {
                 if(input_value.length >= info.options.search_char_limit) {
                     if(info.data.is_ajax) {
+                        /* Show supsel_searching */
+                        info.data.supsel_select.find('.supsel_results .supsel_searching').show();
                         /* Ajax Search requested location */
                         var search_name = {};
                         search_name[info.options.ajax_search_name] = input_value;
@@ -296,23 +299,30 @@
                             dataType: 'json',
                             data: $.extend({}, info.options.ajax_data, search_name),
                             success: function(data){
-                                /* Run through json data and add it to supsel data */
-                                info.data.orig_values = {};
-                                $.each(data, function(index, value) {
-                                    /* Clean up index to  */
-                                    var new_index = index;
-                                    new_index = new_index.replace(/[^a-zA-Z0-9\s]/g, ''); /* Replace everything beside numbers and letters */
-                                    new_index = new_index.replace(/ /g, '_'); /* Replace space with underscore */
-                                    new_index = new_index+(Math.ceil(Math.random() * 1000)); /* Add random number to end to alleviate multiple index */
-                                    info.data.orig_values[new_index] = {
-                                        'val':index,
-                                        'txt':value,
-                                        'srch': input_value
-                                    };
-                                });
+                                /* Show supsel_searching */
+                                info.data.supsel_select.find('.supsel_results .supsel_searching').hide();
+                                if(data){
+                                    /* Run through json data and add it to supsel data */
+                                    info.data.orig_values = {};
+                                    $.each(data, function(index, value) {
+                                        /* Clean up index to  */
+                                        var new_index = index;
+                                        new_index = new_index.replace(/[^a-zA-Z0-9\s]/g, ''); /* Replace everything beside numbers and letters */
+                                        new_index = new_index.replace(/ /g, '_'); /* Replace space with underscore */
+                                        new_index = new_index+(Math.ceil(Math.random() * 1000)); /* Add random number to end to alleviate multiple index */
+                                        info.data.orig_values[new_index] = {
+                                            'val':index,
+                                            'txt':value,
+                                            'srch': input_value
+                                        };
+                                    });
 
-                                info._add_li_to_results();
-                                info._add_click_to_li();
+                                    info._add_li_to_results();
+                                    info._add_click_to_li();
+                                } else {
+                                    /* Show supsel_noresults */
+                                    info.data.supsel_select.find('.supsel_results .supsel_noresults').show();
+                                }
                             }
                         });
                     } else {
@@ -320,13 +330,13 @@
                         $.each(this.data.orig_values, function(index, value) {
                             var search = new RegExp(input_value, 'gi');
                             if(value.txt){
-                            	 if(value.txt.match(search)) {
-    	                            info.data.search_values[index] = {
-    	                                'val':value.val, 
-    	                                'txt':value.txt,
-    	                                'srch': input_value
-    	                            };
-    	                        } 
+                                 if(value.txt.match(search)) {
+                                    info.data.search_values[index] = {
+                                        'val':value.val, 
+                                        'txt':value.txt,
+                                        'srch': input_value
+                                    };
+                                } 
                             }
                         });
 
@@ -459,7 +469,7 @@
                 });
             }
             $.each(info.data.orig_values, function(index, value) {
-            	/* Check if its disabled */
+                /* Check if its disabled */
                 if(value.lbl) {
                     if(value.gid != cur_gid && grp_start) {
                         /* Close off group if this value does not match */
@@ -483,7 +493,7 @@
                     if(info.options.search_highlight && value.srch){
                         value.txt = info._highlight_str(value.txt, value.srch);
                     }
-            		new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
+                    new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
                 }
             });
             if(grp_start) {
@@ -596,10 +606,10 @@
                         info.data.supsel_select.find('.supsel_on_key').each(function(){
                             cur_index = $(this).attr('data-index');
                             if(cur_index){
-                            	info.data.values[cur_index] = {
-                                	'val':info.data.orig_values[cur_index].val,
-                                	'txt':info.data.orig_values[cur_index].txt
-                            	};
+                                info.data.values[cur_index] = {
+                                    'val':info.data.orig_values[cur_index].val,
+                                    'txt':info.data.orig_values[cur_index].txt
+                                };
                             }
                         });
                     } else {
@@ -607,21 +617,21 @@
                         info.data.values = {};
                         cur_index = info.data.supsel_select.find('.supsel_on_key').attr('data-index');
                         if(cur_index){
-                        	info.data.values[cur_index] = {
-                            	'val':info.data.orig_values[cur_index].val,
-                            	'txt':info.data.orig_values[cur_index].txt
-                        	};
+                            info.data.values[cur_index] = {
+                                'val':info.data.orig_values[cur_index].val,
+                                'txt':info.data.orig_values[cur_index].txt
+                            };
                         }
 
                     }
                     if(info.data.supsel_select.find('li:visible').length == 1){
-                    	info.data.values = {};
-                    	cur_index = info.data.supsel_select.find('li:visible').attr('data-index');
+                        info.data.values = {};
+                        cur_index = info.data.supsel_select.find('li:visible').attr('data-index');
                         if(cur_index){
-                        	info.data.values[cur_index] = {
-                            	'val':info.data.orig_values[cur_index].val,
-                            	'txt':info.data.orig_values[cur_index].txt
-                        	};
+                            info.data.values[cur_index] = {
+                                'val':info.data.orig_values[cur_index].val,
+                                'txt':info.data.orig_values[cur_index].txt
+                            };
                         }
                     }
 
@@ -639,7 +649,7 @@
                     if(!shift){
                         info.hide_results();
                     }
-                	 
+                     
                     return false;                  
                 }
 
@@ -648,7 +658,7 @@
         _highlight_scroll_li: function(li_pos) {
             var info = this;
             var li = info.data.supsel_select.find('li');
-        	
+            
             /* Disallow multi select in single select drop */
             if(!shift || !info.data.is_multiple){
                 li.removeClass('supsel_on_key');
@@ -682,6 +692,9 @@
             /* Hide supsel_noresults */
             info.data.supsel_select.find('.supsel_results .supsel_noresults').hide();
 
+            /* Hide supsel_searching */
+            info.data.supsel_select.find('.supsel_results .supsel_searching').hide();
+
             /* Remove class supsel_show_except supsel_show supsel_on */
             info.data.supsel_select.find('.supsel_results').removeClass('supsel_show_except');
             info.data.supsel_select.find('.supsel_results li').removeClass('supsel_show supsel_on');
@@ -704,15 +717,15 @@
             /* Add class supsel_show */
             $.each(info.data.search_values, function(index, value, search) {
                 info.data.supsel_select.find('.supsel_results li[data-index="'+index+'"]:not(.supsel_hide)').addClass('supsel_show').html(function(){
-                	if(info.options.search_highlight && value.srch){
+                    if(info.options.search_highlight && value.srch){
                         return info._highlight_str(value.txt, value.srch);
-                	}
-                	return value.txt;
+                    }
+                    return value.txt;
                 });
             });
 
             /* If no results show supsel_noresults */
-            if(info.data.supsel_select.find('.supsel_results li:visible').length > 0){
+            if(info.data.supsel_select.find('.supsel_results li:visible').length > 0) {
                 info.data.supsel_select.find('.supsel_results .supsel_noresults').hide();
             } else {
                 info.data.supsel_select.find('.supsel_results .supsel_noresults').show();
@@ -751,9 +764,9 @@
                     }
                 } else if (typeof options === 'object' || !options) {
                     if(!$(this).data('superselect')){
-                    		var super_select_obj = Object.create(super_select_funcs);
-	                        super_select_obj.create(options, this);
-	                        $.data(this, 'superselect', super_select_obj);
+                            var super_select_obj = Object.create(super_select_funcs);
+                            super_select_obj.create(options, this);
+                            $.data(this, 'superselect', super_select_obj);
                     }   
                 } else {
                     $.error('Method ' +  options + ' does not exist in Super Select');
@@ -769,16 +782,16 @@
 
 /* IE 8, 7 Compatibility */
 if ( typeof Object.create !== 'function' ) {
-	Object.create = function( obj ) {
-		function F() {};
-		F.prototype = obj;
-		return new F();
-	};
+    Object.create = function( obj ) {
+        function F() {};
+        F.prototype = obj;
+        return new F();
+    };
 }
 if (!Object.keys) Object.keys = function(o) {
   if (o !== Object(o))
     throw new TypeError('Object.keys called on a non-object');
   var k=[],p;
   for (p in o) if (Object.prototype.hasOwnProperty.call(o,p)) k.push(p);
-  	return k;
+    return k;
 }

@@ -108,6 +108,12 @@
     padding: 4px;
     margin: 0px;
 }
+.supsel_div .supsel_info .supsel_searching {
+    display: none;
+    color: #94090D;
+    padding: 4px;
+    margin: 0px;
+}
 .supsel_div .supsel_info .supsel_results .supsel_results_list {
     outline: none;
     margin: 0px;
