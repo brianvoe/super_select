@@ -159,7 +159,7 @@
                 var remove_blank = false;
                 var remove_blank_index = '';
                 $.each(info.data.values, function(index, value) {
-                    if(value.val == '' || value.txt == ''){
+                    if(value.val == '' && value.txt == ''){
                         remove_blank = true;
                         remove_blank_index = index;
                     }
