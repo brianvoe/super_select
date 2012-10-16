@@ -11,6 +11,7 @@
     /* Select Options */
     var select_options = {
         blank_option: 'Choose option...', /* If first option in select is val = '' && text = '' set blank option */
+        select_height: false, /* false or height of superselect - superselect will also inherit styles */
         select_width: false, /* false or width of superselect - superselect will also inherit styles */
         info_width: false, /* false or width of superselect results - superselect will also inherit styles and add 50 */
         search_highlight: true, /* true or false - Highlights search results */
@@ -72,13 +73,14 @@
             info.data.orig_select = $('#'+info.data.orig_id);
 
             /* Set style variables */
+            info.options.select_height = (info.options.select_height ? info.options.select_height: (info.data.is_multiple ? 'auto': info.data.orig_select.height()));
             info.options.select_width = (info.options.select_width ? info.options.select_width: info.data.orig_select.width());
             info.options.info_width = (info.options.info_width ? info.options.info_width: info.options.select_width+50);
 
             /* Create html for supsel */
             var new_select = '';
             new_select += '<div id="'+info.data.supsel_id+'" class="supsel_div">';
-            new_select += '   <div class="supsel_select supsel_topoff" tabindex="0" style="width: '+info.options.select_width+'px;">';
+            new_select += '   <div class="supsel_select supsel_topoff" tabindex="0" style="height: '+(info.options.select_height == 'auto' ? 'auto': info.options.select_height+'px')+'; width: '+info.options.select_width+'px;">';
             new_select += '       <div class="supsel_select_values" style="width: '+(info.options.select_width-15)+'px;"></div>';
             new_select += '       <div class="'+(info.data.is_multiple ? 'supsel_select_add': 'supsel_select_arrow supsel_arrow_down')+'"></div>';
             new_select += '       <div class="supsel_clear"></div>';
