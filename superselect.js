@@ -125,6 +125,13 @@
                         'val':this.value,
                         'txt':this.text
                     };
+                    /* If single select option has placeholder */
+                    if(!info.data.is_multiple && $(this).data('placeholder') == true) {
+                        info.data.orig_values['o-'+o_num].place = true;
+                        if($(this).is(':selected')){
+                            info.data.values['o-'+o_num].place = true;
+                        }
+                    }
                     if($(this).is(':disabled')){
                         info.data.orig_values['o-'+o_num].dis = true;
                     }
@@ -155,25 +162,6 @@
                     g_num++;
                 }
             });
-
-            /* Set placeholder if no values set or value does not have val or text - Single dropdown only */
-            if(!info.data.is_multiple){
-                var remove_blank = false;
-                var remove_blank_index = '';
-                $.each(info.data.values, function(index, value) {
-                    if(value.val == '' && value.txt == ''){
-                        remove_blank = true;
-                        remove_blank_index = index;
-                    }
-                });
-                if(remove_blank){
-                    /* Remove from values and original values */
-                    info.data.values = {};
-                    delete info.data.orig_values[remove_blank_index];
-                    /* Remove from original select */
-                    info.data.orig_select.find("option[value='']").remove();
-                }
-            }
 
             /* Add content to results */
             info._add_li_to_results();
@@ -231,7 +219,7 @@
             /* Highlight original values */
             info._set_display_results();
 
-            /* If no values selected set blank placeholder */
+            /* If no values selected or option has data-placeholder set to true set blank placeholder */
             info._set_display_blank();
         },
         set_values: function(values) {
@@ -467,15 +455,35 @@
         _set_display_blank: function() {
             var info = this;
 
-            if(Object.keys(info.data.values).length === 0){
-                info.data.supsel_select.find('.supsel_select .supsel_select_values').html('<span class="show_blank">'+info.options.blank_option+'</span>');
+            if(!info.data.is_multiple) {
+                /* Single */
+                var set_blank_placeholder = false;
+                var placeholder_text = '';
+                $.each(info.data.values, function(index, value) {
+                    if(value.place == true){
+                        set_blank_placeholder = true;
+                        placeholder_text = value.txt;
+                    }
+                });
+
+                if(set_blank_placeholder){
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html('<span class="show_blank">'+placeholder_text+'</span>');
+                } else {
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values .show_blank').remove();
+                }
             } else {
-                info.data.supsel_select.find('.supsel_select .supsel_select_values .show_blank').remove();
+                /* Multiple */
+                if(Object.keys(info.data.values).length === 0){
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html('<span class="show_blank">'+info.options.blank_option+'</span>');
+                } else {
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values .show_blank').remove();
+                }
             }
         },
         _add_li_to_results: function() {
             var info = this;
-            var new_results = '';            
+            var new_results = '';
+            var set_class = '';
 
             /* Add li's to results */
             var cur_gid = false;
@@ -483,7 +491,7 @@
             /* Add original values to results */
             if(info.options.ajax_orig_results) {
                 $.each(info.data.orig_values, function(index, value) {
-                    new_results += '<li data-index="'+index+'">'+value.txt+'</li>';
+                    new_results += '<li data-index="'+index+'" '+(value.place ? 'class="supsel_show_blank"': '')+'>'+value.txt+'</li>';
                 });
             }
             $.each(info.data.orig_values, function(index, value) {
@@ -511,7 +519,12 @@
                     if(info.options.search_highlight && value.srch){
                         value.txt = info._highlight_str(value.txt, value.srch);
                     }
-                    new_results += '<li data-index="'+index+'" '+(value.dis ? 'class="supsel_disabled"': '')+'>'+value.txt+'</li>';
+                    /* Set Class */
+                    set_class = '';
+                    if(value.dis || value.place) {
+                        set_class = 'class="'+(value.dis ? 'supsel_disabled ': '')+(value.place ? 'supsel_show_blank': '')+'"';
+                    }
+                    new_results += '<li data-index="'+index+'" '+set_class+'>'+value.txt+'</li>';
                 }
             });
             if(grp_start) {
@@ -539,6 +552,11 @@
                     'txt':text
                 };
 
+                /* Set placeholder if attr place == true */
+                if(!info.data.is_multiple && info.data.orig_values[index].place == true) {
+                    info.data.values[index].place = true;
+                }
+
                 /* Hide results for single only */
                 if(!info.data.is_multiple) {
                     info.hide_results();
@@ -555,6 +573,9 @@
 
                 /* Set original select values */
                 info._set_select_values();
+
+                /* If no values selected or option has data-placeholder set to true set blank placeholder */
+                info._set_display_blank();
 
                 return false;
             });
