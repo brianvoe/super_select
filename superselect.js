@@ -275,8 +275,8 @@
 
             info.data.supsel_select.find('.supsel_info').hide();
             /* Change z-index */
-            info.data.supsel_select.find('.supsel_select').css('z-index', 2);
-            info.data.supsel_select.find('.supsel_info').css('z-index', 1);
+            info.data.supsel_select.find('.supsel_select').css('z-index', 0);
+            info.data.supsel_select.find('.supsel_info').css('z-index', 0);
             /* Change select style */
             info.data.supsel_select.find('.supsel_topon').removeClass('supsel_topon').addClass('supsel_topoff');
             /* Change arrow image */
