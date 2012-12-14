@@ -8,7 +8,11 @@
         <link href="superselect.css" rel="stylesheet" type="text/css" />
         <script>
             $(document).ready(function(){
-                $('.supsel').superselect();
+                $('.supsel').superselect({
+                    select_width: 150,
+                    info_width: 350,
+                    char_limit: 10
+                });
                 $('#optselect').superselect({
                 	search_highlight: true
                 });
@@ -58,11 +62,11 @@
         <div style="float: left; width: 500px;">
             <h3>Single Select</h3>
             <select class="supsel" style="width: 200px;" id="animals" name="animals">
-                <option data-placeholder="true" value="">Select Animal Type...</option>
-                <option value="cat">Cat</option>
-                <option disabled="disabled" value="dog">Dog</option>
-                <option value="horse">Horse</option>
-                <option disabled="disabled" value="ferret">Ferret</option>
+                <option data-placeholder="true" value="">Select User...</option>
+                <option value="cat">Bill Gates - billyboy@gatesrich.com</option>
+                <option disabled="disabled" value="dog">Steve Jobs - iphone@applestuff.com</option>
+                <option value="horse">Linus Torvalds - linux@terminal.com</option>
+                <option disabled="disabled" value="ferret">Chuck Norris - awesome@fightstuff.com</option>
             </select>
             <h3>Multiple Select</h3>
             <select class="supsel" style="width: 300px;" multiple name="cats">

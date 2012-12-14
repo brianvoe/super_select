@@ -14,6 +14,7 @@
         select_height: false, /* false or height of superselect - superselect will also inherit styles */
         select_width: false, /* false or width of superselect - superselect will also inherit styles */
         info_width: false, /* false or width of superselect results - superselect will also inherit styles and add 50 */
+        char_limit: false, /* false or # - Selected value text character limitation */
         search_highlight: true, /* true or false - Highlights search results */
         search_char_limit: 1, /* int - set search  */
         /* Ajax variables */
@@ -409,12 +410,13 @@
         _set_display_select: function() {
             var info = this;
 
+
             if(!info.data.is_multiple) {
                 /* Single */
 
                 /* Set supsel_select_values value */
                 $.each(info.data.values, function(index, value) {
-                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html(value.txt);
+                    info.data.supsel_select.find('.supsel_select .supsel_select_values').html(info._limit_char(value.txt, info.options.char_limit));
                 });
             } else {
                 /* Multiple */
@@ -423,7 +425,7 @@
                 var multi_values = '';
                 $.each(info.data.values, function(index, value) {
                     multi_values += '<div data-index="'+index+'" class="supsel_select_item" style="max-width: '+(info.options.select_width-15)+'px;overflow:hidden;">';
-                    multi_values += '   <div class="supsel_select_item_text">'+value.txt+'</div>';
+                    multi_values += '   <div class="supsel_select_item_text">'+info._limit_char(value.txt, info.options.char_limit)+'</div>';
                     multi_values += '   <div class="supsel_select_item_del"></div>';
                     multi_values += '</div>';
                 });
@@ -772,6 +774,17 @@
         /* Reusable misc functions */
         _special_char_escape: function(str) {
             return str.replace(/[.*+?|()\[\]{}\\$^]/g, "\\$&");
+        },
+        _limit_char: function(text, limit) {
+            if(limit) {
+                if(text.length <= limit) {
+                    return text;
+                } else {
+                    return text.substring(0, limit)+'...';
+                }
+            } else {
+                return text;
+            }
         },
         _highlight_str: function(str, val) {
             var info = this;
