@@ -468,12 +468,6 @@
                     }
                 });
 
-                //Need Review and testing
-                if(info.options.blank_option){
-                    set_blank_placeholder = true;
-                    placeholder_text = info.options.blank_option;
-                }
-
                 if(set_blank_placeholder){
                     info.data.supsel_select.find('.supsel_select .supsel_select_values').html('<span class="show_blank">'+placeholder_text+'</span>');
                 } else {
